@@ -12,5 +12,6 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
     {
         public DbSet<Problem> Problems { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Testcase> Testcases { get; set; }
     }
 }

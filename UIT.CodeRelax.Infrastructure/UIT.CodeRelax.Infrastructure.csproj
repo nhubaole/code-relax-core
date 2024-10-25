@@ -17,6 +17,8 @@
   <ItemGroup>
 
     <ProjectReference Include="..\UIT.CodeRelax.Core\UIT.CodeRelax.Core.csproj" />
+
+    <ProjectReference Include="..\UIT.CodeRelax.UseCases\UIT.CodeRelax.UseCases.csproj" />
   </ItemGroup>
 
 </Project>

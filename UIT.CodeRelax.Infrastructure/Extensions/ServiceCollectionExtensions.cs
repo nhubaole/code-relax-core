@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Infrastructure.DataAccess;
-using UIT.CodeRelax.Infrastructure.Interfaces;
 
 namespace UIT.CodeRelax.Infrastructure.Extensions
 {
