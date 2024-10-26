@@ -15,7 +15,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Problem
         public int NumOfAcceptance { get; set; }
         public int NumOfSubmission { get; set; }
         public DateTime CreatedAt { get; set; }
-        public List<TestcaseDto>? Testcases { get; set; } = new List<TestcaseDto>();
     }
 
     public class TestcaseDto

@@ -40,7 +40,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                var problem = await _dbContext.Problems.FirstOrDefaultAsync();
+                var problem = await _dbContext.Problems.FirstOrDefaultAsync(x => x.Id == id);
                 return _mapper.Map<GetProblemRes>(problem);
             }
             catch (Exception ex)

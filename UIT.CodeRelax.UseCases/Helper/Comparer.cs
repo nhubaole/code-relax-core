@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,24 +9,55 @@ namespace UIT.CodeRelax.UseCases.Helper
 {
     internal class Comparer
     {
-        private static bool CompareOutputs(dynamic actual, dynamic expected)
+        public static bool CompareOutputs(dynamic actualOutput, dynamic expectedOutput)
         {
-            // Compare if both are dictionaries (for JSON objects)
-            if (actual is IDictionary<string, dynamic> && expected is IDictionary<string, dynamic>)
+            JArray actualArray = null;
+            JArray expectedArray = null;
+
+            // Kiểm tra và chuyển actualOutput thành JArray nếu có dạng mảng
+            if (actualOutput is JArray)
             {
-                return actual.Count == expected.Count && !actual.Except(expected).Any();
+                actualArray = actualOutput;
+            }
+            else if (actualOutput is IEnumerable<int> || actualOutput is IEnumerable<string>)
+            {
+                actualArray = new JArray(actualOutput);
+            }
+            else if (actualOutput is string actualString && actualString.StartsWith("[") && actualString.EndsWith("]"))
+            {
+                actualArray = JArray.Parse(actualString);
             }
 
-            // If both are arrays or lists, compare element by element
-            if (actual is IEnumerable<dynamic> && expected is IEnumerable<dynamic>)
+            // Kiểm tra và chuyển expectedOutput thành JArray nếu có dạng mảng
+            if (expectedOutput is JArray)
             {
-                return actual.SequenceEqual(expected);
+                expectedArray = expectedOutput;
+            }
+            else if (expectedOutput is IEnumerable<int> || expectedOutput is IEnumerable<string>)
+            {
+                expectedArray = new JArray(expectedOutput);
+            }
+            else if (expectedOutput is string expectedString && expectedString.StartsWith("[") && expectedString.EndsWith("]"))
+            {
+                expectedArray = JArray.Parse(expectedString);
             }
 
-            // For primitive types (int, string, etc.), do a direct comparison
-            return actual == expected;
+            // So sánh hai JArray nếu cả hai đều là mảng
+            if (actualArray != null && expectedArray != null)
+            {
+                return JToken.DeepEquals(actualArray, expectedArray);
+            }
+
+            // So sánh các kiểu dữ liệu đơn giản như số nguyên, chuỗi hoặc boolean trực tiếp
+            if ((actualOutput is int || actualOutput is long || actualOutput is double || actualOutput is string || actualOutput is bool) &&
+                (expectedOutput is int || expectedOutput is long || expectedOutput is double || expectedOutput is string || expectedOutput is bool))
+            {
+                return actualOutput == expectedOutput;
+            }
+
+            // Nếu không khớp kiểu hoặc khác cấu trúc, trả về false
+            return false;
         }
-
 
     }
 }

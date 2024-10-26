@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -35,8 +37,10 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
+
                 foreach (var testCase in testCases)
                 {
+
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
                     var response = await RunCode(sourceFilePath, req.Language);
@@ -54,14 +58,23 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             }
                         };
                     }
-                    if (response.Output != testCase.Output)
+
+                    // Parse testCase.Output to compare
+                    var expectedOutput = JsonConvert.DeserializeObject<Dictionary<string, object>>(testCase.Output)["output"];
+                    if (!Comparer.CompareOutputs(response.Output, expectedOutput))
                     {
                         isAccept = false;
                         outputs.Add(response.Output);
                     }
-                    outputs.Add(response.Output);
+                    else
+                    {
+                        outputs.Add(response.Output);
+                    }
+
+                    // Clean up source file after execution
                     File.Delete(sourceFilePath);
                 }
+
                 if (!isAccept)
                 {
                     return new APIResponse<SubmitCodeRes>
@@ -71,10 +84,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Data = new SubmitCodeRes
                         {
                             Success = false,
-                            Output = outputs[0]
+                            Output = outputs[0] // Return the output that failed
                         }
                     };
                 }
+
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = 200,
@@ -82,7 +96,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     Data = new SubmitCodeRes
                     {
                         Success = true,
-                        Output = outputs[0]
+                        Output = outputs[0] // Return the first successful output
                     }
                 };
             }
@@ -95,6 +109,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
+
 
         public async Task<IEnumerable<TestcaseRes>> GetTestCase(int problemID)
         {
@@ -117,6 +132,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             var problem = await _problemRepository.GetByIDAsync(problemId);
             string functionName = Converter.ToPascalCase(problem.Title);
 
+            var inputData = JsonConvert.DeserializeObject<JObject>(param);
+
+            // Convert the parameters based on language
+            string convertedParams = Converter.ConvertParamsForLanguage(language, inputData);
+
             string extension = language switch
             {
                 "Python" => ".py",
@@ -128,50 +148,86 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
             if (language == "Java")
             {
-                fullSourceCode = @$"public class Solution{{
+                fullSourceCode = $@"
+                   import java.util.HashMap;
+                   import java.util.Map;
 
-	                                public static void main(String[] args){{
+                   public class Solution {{
 
-		                                System.out.println({functionName}({param}));
-	                                }}
-                                    {sourceCode}
-                                }}";
+                     public static void main(String[] args) {{
+                         {convertedParams}  // Khởi tạo các tham số đầu vào từ JSON
+                         System.out.println({functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))}));
+                     }}
+
+                     {sourceCode}
+                   }}";
+
                 var publicClassLine = fullSourceCode.Split('\n').FirstOrDefault(line => line.Contains("public class"));
                 if (publicClassLine != null)
                 {
-                    var className = publicClassLine.Split(' ')[2];
-                    tempPath = Path.Combine(Path.GetTempPath(), $"Solution{extension}");
+                    //var className = publicClassLine.Split(' ')[2].Trim();  
+                    tempPath = Path.Combine(Path.GetTempPath(), $"Solution.java");
                 }
             }
+
+
             else if (language == "C++")
             {
                 fullSourceCode = $@"#include <iostream>
-                                using namespace std;
-                                {sourceCode}
-                                int main() {{
-                                  
-                                    cout << {functionName}({param}) << endl;
+                using namespace std;
+                #include <vector>
+                {sourceCode}
 
-                                    return 0;
-                                }}";
+                // Hàm hỗ trợ in vector<int>
+                void printVector(const vector<int>& vec) {{
+                    cout << ""["";
+                    for (size_t i = 0; i < vec.size(); ++i) {{
+                        cout << vec[i];
+                        if (i < vec.size() - 1)
+                            cout << "", "";
+                    }}
+                    cout << ""]"";
+                }}
+
+                template<typename T>
+                void printResult(T result) {{
+                    cout << result << endl;
+                }}
+
+                // Nạp chồng hàm printResult cho vector<int>
+                void printResult(const vector<int>& result) {{
+                    printVector(result);
+                    cout << endl;
+                }}
+
+                int main() {{
+                    {convertedParams}  // Khởi tạo các tham số đầu vào từ JSON
+                    auto result = {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))}); 
+                    printResult(result);  // In kết quả
+                    return 0;
+                }}";
 
                 tempPath = Path.ChangeExtension(tempPath, extension);
             }
+
+
+
             else if (language == "Python")
             {
                 fullSourceCode = $"{sourceCode}" +
-                    $"\nprint({functionName}({param}))";
+                                 $"\nprint({functionName}({convertedParams}))";
             }
             else
             {
                 tempPath = Path.ChangeExtension(tempPath, extension);
             }
 
-
-
             File.WriteAllText(tempPath, fullSourceCode);
             return tempPath;
         }
+
+
+
 
         private async Task<SubmitCodeRes> RunCode(string filePath, string language)
         {
@@ -198,7 +254,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     var compileProcessInfo = new ProcessStartInfo
                     {
                         FileName = "g++",
-                        Arguments = $"-o {exeFilePath} {filePath}",
+                        Arguments = $"-std=c++11 -o {exeFilePath} {filePath}",
                         RedirectStandardOutput = true,
                         RedirectStandardError = true,
                         UseShellExecute = false
