@@ -27,6 +27,18 @@ namespace UIT.CodeRelax.Core.Entities
         public int Role { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        //relation one to many with submissions 
+        public ICollection<Submission> Submissions { get; set; } = new List<Submission>();
+
+        //relation one to many with discussion 
+        public ICollection<Discussion> Discussions { get; set; } = new List<Discussion>();
+
+        //relation one to many with rating 
+        public ICollection<Rating> ratings { get; set; } = new List<Rating>();
+
+
+
     }
 }
 
