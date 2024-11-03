@@ -16,6 +16,16 @@ builder.Services.AddScoped<ITestcaseRepository, TestcaseRepository>();
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
 builder.Services.AddAutoMapper(typeof(AppProfile));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("http://localhost:5173");
+        builder.WithMethods("GET", "POST", "PUT", "DELETE");
+        builder.AllowAnyHeader();
+    });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -30,6 +40,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthorization();
 
