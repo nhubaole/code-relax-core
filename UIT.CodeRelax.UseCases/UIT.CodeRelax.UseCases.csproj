@@ -15,8 +15,4 @@
     <ProjectReference Include="..\UIT.CodeRelax.Core\UIT.CodeRelax.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\Responses\Authentication\" />
-  </ItemGroup>
-
 </Project>
