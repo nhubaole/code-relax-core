@@ -11,6 +11,7 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
     public interface IUserService
     {
         Task<APIResponse<SignUpRes>> SignUp(SignUpReq signUpReq);
+        Task<APIResponse<LoginRes>> Login(LoginReq loginReq);
         Task<APIResponse<UserProfileRes>> GetUserById(int UserId);
     }
 }

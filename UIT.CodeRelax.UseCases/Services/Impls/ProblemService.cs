@@ -226,9 +226,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             return tempPath;
         }
 
-
-
-
         private async Task<SubmitCodeRes> RunCode(string filePath, string language)
         {
             var processInfo = new ProcessStartInfo();

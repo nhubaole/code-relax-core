@@ -27,7 +27,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             _mapper = mapper;
         }
 
-        async Task<SignUpRes> IUserRepository.SignUpAsync(SignUpReq signUpReq)
+        async Task<SignUpRes> IUserRepository.AddUserAsync(SignUpReq signUpReq)
         {
             try
             {
@@ -92,8 +92,25 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 throw ex;
             }
         }
+        public async Task<UserProfileRes> UserExisted(LoginReq loginReq)
+        {
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == loginReq.Email && u.Password == loginReq.Password);
 
+            UserProfileRes userRes = new UserProfileRes();
+            if (user != null)
+            {
+                userRes.Success = true;
+                userRes.Id = user.Id;
+                userRes.DisplayName = user.DisplayName;
+                userRes.Password = user.Password;
+                userRes.Email = user.Email;
+                userRes.Role = user.Role;
+                userRes.CreatedAt = user.CreatedAt;
 
-        
+                return userRes;
+
+            }
+            return null;
+        }
     }
 }

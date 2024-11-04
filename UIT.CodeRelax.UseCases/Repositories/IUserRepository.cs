@@ -15,6 +15,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
     {
         Task<UserProfileRes> GetUserById(int UserId);
 
-        Task<SignUpRes> SignUpAsync(SignUpReq signUpReq);
+        Task<SignUpRes> AddUserAsync(SignUpReq signUpReq);
+        Task<UserProfileRes> UserExisted(LoginReq loginReq);
     }
 }

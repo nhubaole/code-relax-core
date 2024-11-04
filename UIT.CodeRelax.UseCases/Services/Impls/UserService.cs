@@ -43,7 +43,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 if (IsValidEmail(signUpReq.Email) && IsValidPassword(signUpReq.Password))
                 {
-                    var signUpRes = await userRepository.SignUpAsync(signUpReq);
+                    var signUpRes = await userRepository.AddUserAsync(signUpReq);
 
                     if (signUpRes != null)
                     {
@@ -151,6 +151,53 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     }
                 };
                 throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
+            }
+            finally { errorMessage = null; }
+        }
+
+        public async Task<APIResponse<LoginRes>> Login(LoginReq loginReq)
+        {
+            try
+            {
+                var user = await userRepository.UserExisted(loginReq);
+
+                if (user != null)
+                {
+                    return new APIResponse<LoginRes>
+                    {
+                        StatusCode = 200,
+                        Message = "Success",
+                        Data = new LoginRes
+                        {
+                            Success = true,
+                            UserProfile = user
+                        }
+                    };
+                }
+
+                return new APIResponse<LoginRes>
+                {
+                    StatusCode = 400,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    Data = new LoginRes
+                    {
+                        Success = false
+                    }
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<LoginRes>
+                {
+                    StatusCode = 400,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    Data = new LoginRes
+                    {
+                        Success = false
+                    }
+                };
+                throw new Exception("UserSerrvice: An error occurred while  logging.\n", ex);
             }
             finally { errorMessage = null; }
         }

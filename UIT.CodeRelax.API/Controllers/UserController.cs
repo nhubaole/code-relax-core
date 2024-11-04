@@ -25,6 +25,34 @@ namespace UIT.CodeRelax.API.Controllers
             return Ok(await userService.SignUp(signUpReq));
         }
 
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginReq loginReq)
+        {
+            if (loginReq == null || string.IsNullOrEmpty(loginReq.Email) || string.IsNullOrEmpty(loginReq.Password))
+            {
+                return BadRequest(new APIResponse<LoginRes>
+                {
+                    StatusCode = 400,
+                    Message = "Email and Password must not be empty",
+                    Data = null
+                });
+            }
+
+            var response = await userService.Login(loginReq);
+
+            if (response == null || !response.Data.Success)
+            {
+                return NotFound(new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 404,
+                    Message = "Email or Password is wrong",
+                    Data = null
+                });
+            }
+
+            return Ok(response);
+        }
+
         [HttpGet("{UserId}")]
         public async Task<IActionResult> GetUserByID(int UserId)
         {
