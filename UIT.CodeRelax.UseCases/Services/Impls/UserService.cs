@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
@@ -31,6 +32,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
+                
                 if (!IsValidEmail(signUpReq.Email))
                 {
                     errorMessage = "Invalid email format.";
@@ -159,7 +161,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                var user = await userRepository.UserExisted(loginReq);
+                var user = await userRepository.AuthorizeUser(loginReq);
 
                 if (user != null)
                 {
@@ -198,6 +200,93 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     }
                 };
                 throw new Exception("UserSerrvice: An error occurred while  logging.\n", ex);
+            }
+            finally { errorMessage = null; }
+        }
+
+        public async Task<APIResponse<UserProfileRes>> UpdateUserProfile(UserProfileReq userProfileReq)
+        {
+            try
+            {
+                bool isExisted = (await userRepository.GetUserById(userProfileReq.Id))!= null;
+
+                if (isExisted)
+                {
+                    if (!IsValidEmail(userProfileReq.Email))
+                    {
+                        errorMessage = "Invalid email format.";
+                    }
+
+                    else if (!IsValidPassword(userProfileReq.Password))
+                    {
+                        errorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one digit."; // Lưu thông điệp lỗi cho mật khẩu
+                    }
+
+                    if (String.IsNullOrEmpty(errorMessage))
+                    {
+                        User user = new User
+                        {
+                            Id = userProfileReq.Id,
+                            Email = userProfileReq.Email,
+                            Password = userProfileReq.Password,
+                            DisplayName = userProfileReq.DisplayName,
+                            Role = userProfileReq.Role,
+                        };
+
+                        var UpdatedUser = await userRepository.UpdateUserAsync(user);
+
+                        if (UpdatedUser != null)
+                        {
+                            return new APIResponse<UserProfileRes>
+                            {
+                                StatusCode = 200,
+                                Message = "Success",
+                                Data = new UserProfileRes
+                                {
+                                    Success = true,
+                                    Id = UpdatedUser.Id,
+                                    DisplayName = UpdatedUser.DisplayName,
+                                    Password = UpdatedUser.Password,
+                                    Email = UpdatedUser.Email,
+                                    Role = UpdatedUser.Role,
+                                    CreatedAt = UpdatedUser.CreatedAt
+
+                                }
+                            };
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    errorMessage = "User is not existed";
+                }
+
+
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    Data = new UserProfileRes
+                    {
+                        Success = false
+                    }
+                };
+
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message,
+                    Data = new UserProfileRes
+                    {
+                        Success = false
+                    }
+                };
+                throw new Exception("UserSerrvice: An error occurred while updating.\n", ex);
             }
             finally { errorMessage = null; }
         }

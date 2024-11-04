@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.Infrastructure.DataAccess;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.User;
 using UIT.CodeRelax.UseCases.Repositories;
@@ -36,7 +37,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     //Console.Write("Erro from UserRepository: Email is existed.");
                     throw new Exception("Email is existed.");
                 }
-
 
                 var user = new User
                 {
@@ -92,7 +92,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 throw ex;
             }
         }
-        public async Task<UserProfileRes> UserExisted(LoginReq loginReq)
+        public async Task<UserProfileRes> AuthorizeUser(LoginReq loginReq)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == loginReq.Email && u.Password == loginReq.Password);
 
@@ -111,6 +111,31 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             }
             return null;
+        }
+
+        public async Task<User> UpdateUserAsync(User user)
+        {
+            var userExisted = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
+
+            if(userExisted != null)
+            {
+                userExisted.Email = user.Email;
+                userExisted.Password = user.Password;
+                userExisted.DisplayName = user.DisplayName;
+
+
+                _dbContext.Users.Update(userExisted);
+
+                var result = await _dbContext.SaveChangesAsync();
+
+                if (result > 0)
+                {
+                    return userExisted;
+                }
+            }
+
+            return null;
+
         }
     }
 }

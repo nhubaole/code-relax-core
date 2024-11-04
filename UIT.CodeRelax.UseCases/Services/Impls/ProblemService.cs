@@ -28,7 +28,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             _testcaseRepository = testcaseRepository;
         }
 
-
         public async Task<APIResponse<SubmitCodeRes>> Submit(SubmitCodeReq req)
         {
             try
@@ -109,7 +108,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
-
 
         public async Task<IEnumerable<TestcaseRes>> GetTestCase(int problemID)
         {

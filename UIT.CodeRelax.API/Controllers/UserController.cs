@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.User;
@@ -64,6 +65,35 @@ namespace UIT.CodeRelax.API.Controllers
                 {
                     StatusCode = 404,
                     Message = "User not found",
+                    Data = null
+                });
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPut("{UserId}")]
+        public async Task<IActionResult> UpdateUser(int UserId, [FromBody] UserProfileReq user)
+        {
+
+            if (user == null)
+            {
+                return BadRequest(new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = "User data must not be null",
+                    Data = null
+                });
+            }
+
+            var response = await userService.UpdateUserProfile(user);
+
+            if (response == null)
+            {
+                return BadRequest(new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = "Failed to update",
                     Data = null
                 });
             }

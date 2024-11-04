@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
@@ -16,6 +17,9 @@ namespace UIT.CodeRelax.UseCases.Repositories
         Task<UserProfileRes> GetUserById(int UserId);
 
         Task<SignUpRes> AddUserAsync(SignUpReq signUpReq);
-        Task<UserProfileRes> UserExisted(LoginReq loginReq);
+
+        Task<User> UpdateUserAsync(User user);
+
+        Task<UserProfileRes> AuthorizeUser(LoginReq loginReq);
     }
 }
