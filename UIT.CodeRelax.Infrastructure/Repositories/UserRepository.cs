@@ -61,8 +61,39 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 throw ex;
             }
         }
+
+        public async Task<UserProfileRes> GetUserById(int UserId)
+        {
+            try
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+                UserProfileRes userRes = new UserProfileRes();    
+                if(user != null)
+                {
+                    userRes.Id = user.Id;
+                    userRes.DisplayName = user.DisplayName;
+                    userRes.Password = user.Password;
+                    userRes.Email = user.Email;
+                    userRes.Role = user.Role;
+                    userRes.CreatedAt = user.CreatedAt;
+
+                    return userRes;
+
+                }
+                return null ;
+
+                //userRes.Google = "";
+                //userRes.Github = "";
+                //userRes.Facebook = "";
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         
-
-
     }
 }

@@ -9,6 +9,7 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
+using UIT.CodeRelax.UseCases.DTOs.Responses.User;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
@@ -99,6 +100,59 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         public bool IsValidPassword (string pass)
         {
             return pass.Length > 8 && pass.Any(Char.IsUpper) && pass.Any(Char.IsLower) && pass.Any(Char.IsDigit);
+        }
+
+        public async Task<APIResponse<UserProfileRes>> GetUserById(int UserId)
+        {
+            try
+            {
+                var user = await userRepository.GetUserById(UserId);
+
+                if (user != null)
+                {
+                    return new APIResponse<UserProfileRes>
+                    {
+                        StatusCode = 200,
+                        Message = "Success",
+                        Data = new UserProfileRes
+                        {
+                            Success = true,
+                            Id = UserId,
+                            DisplayName = user.DisplayName,
+                            Password = user.Password,
+                            Email = user.Email,
+                            Role = user.Role,
+                            CreatedAt = user.CreatedAt
+
+                         }
+                    };
+                }    
+
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    Data = new UserProfileRes
+                    {
+                        Success = false
+                    }
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message,
+                    Data = new UserProfileRes
+                    {
+                        Success = false
+                    }
+                };
+                throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
+            }
+            finally { errorMessage = null; }
         }
     }
 }

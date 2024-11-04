@@ -13,7 +13,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
 {
     public interface IUserRepository
     {
-        //Task<IEnumerable<UserRes>> GetUserById(int UserId);
+        Task<UserProfileRes> GetUserById(int UserId);
 
         Task<SignUpRes> SignUpAsync(SignUpReq signUpReq);
     }
