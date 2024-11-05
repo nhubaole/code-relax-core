@@ -28,7 +28,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             _testcaseRepository = testcaseRepository;
         }
 
-
         public async Task<APIResponse<SubmitCodeRes>> Submit(SubmitCodeReq req)
         {
             try
@@ -249,9 +248,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             File.WriteAllText(tempPath, fullSourceCode);
             return tempPath;
         }
-
-
-
 
         private async Task<SubmitCodeRes> RunCode(string filePath, string language)
         {

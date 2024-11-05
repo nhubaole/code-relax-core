@@ -32,7 +32,25 @@ namespace UIT.CodeRelax.Core.Entities
         public string? ReturnType { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
         // one to many testcase
         public ICollection<Testcase> Testcases { get; set; } = new List<Testcase>();
+
+        // one to many submission
+        public ICollection<Submission> Submissions { get; set; } = new List<Submission>();
+
+        // one to many problem_tag
+        public ICollection<ProblemTag> ProblemTags { get; set; } = new List<ProblemTag>();
+
+        //relation one to many with problem package 
+        public ICollection<ProblemPackage> ProblemPackages { get; set; } = new List<ProblemPackage>();
+
+        //relation one to many with discussion 
+        public ICollection<Discussion> Discussions { get; set; } = new List<Discussion>();
+
+        //relation one to many with rating 
+        public ICollection<Rating> ratings { get; set; } = new List<Rating>();
+
+
     }
 }

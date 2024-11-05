@@ -4,38 +4,43 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace UIT.CodeRelax.Core.Entities
 {
-    [Table("testcases")]
-    public class Testcase
+    [Table("submissions")]
+    public class Submission
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
         public int Id { get; set; }
 
-        [Required]
-        [Column("input", TypeName = "jsonb")]
-        public string Input { get; set; } = JsonSerializer.Serialize(new { });
+        [Column("code")]
+        public string Code { get; set; }
 
-        [Required]
-        [Column("output", TypeName = "jsonb")]
-        public string Output { get; set; } = JsonSerializer.Serialize(new { });
+        [Column("language")]
+        public int Language { get; set; }
 
-        [Column("is_example")]
-        public bool IsExample { get; set; }
+        [Column("status")]
+        public int Status { get; set; }
+
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("Problem")]
         [Column("problem_id")]
         public int ProblemId { get; set; }
         public Problem Problem { get; set; }
 
+
+        [ForeignKey("User")]
+        [Column("user_id")]
+        public int UserId { get; set; }
+        public User User { get; set; }
+
         //one to many submission_result
         public ICollection<SubmissionResult> SubmissionResults { get; } = new List<SubmissionResult>();
+
     }
 }

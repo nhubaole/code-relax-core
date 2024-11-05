@@ -12,5 +12,8 @@ namespace UIT.CodeRelax.UseCases.Repositories
     {
         public Task<IEnumerable<GetProblemRes>> GetAllAsync();
         public Task<GetProblemRes> GetByIDAsync(int id);
+
+        //public Task<IEumerable<GetProblemDashboardRes>>GetAllProDabAsync(int idUser);
+
     }
 }

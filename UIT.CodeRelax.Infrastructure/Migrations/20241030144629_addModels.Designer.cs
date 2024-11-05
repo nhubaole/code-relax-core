@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UIT.CodeRelax.Infrastructure.DataAccess;
@@ -11,9 +12,11 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 namespace UIT.CodeRelax.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241030144629_addModels")]
+    partial class addModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,10 +114,6 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("explaination");
 
-                    b.Property<string>("FunctionName")
-                        .HasColumnType("text")
-                        .HasColumnName("function_name");
-
                     b.Property<int>("NumOfAcceptance")
                         .HasColumnType("integer")
                         .HasColumnName("num_of_acceptance");
@@ -122,10 +121,6 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                     b.Property<int>("NumOfSubmission")
                         .HasColumnType("integer")
                         .HasColumnName("num_of_submission");
-
-                    b.Property<string>("ReturnType")
-                        .HasColumnType("text")
-                        .HasColumnName("return_type");
 
                     b.Property<string>("Title")
                         .IsRequired()

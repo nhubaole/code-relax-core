@@ -14,7 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<ITestcaseRepository, TestcaseRepository>();
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
+
+
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAutoMapper(typeof(AppProfile));
+
+//config log 
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddCors(options =>
