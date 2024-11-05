@@ -7,11 +7,11 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class JudgesController : ControllerBase
+    public class ProblemsController : ControllerBase
     {
         private readonly IProblemService _judgeService;
 
-        public JudgesController(IProblemService judgeService)
+        public ProblemsController(IProblemService judgeService)
         {
             _judgeService = judgeService;
         }
@@ -26,6 +26,12 @@ namespace UIT.CodeRelax.API.Controllers
         public async Task<IActionResult> Submit(SubmitCodeReq req)
         {
             return Ok(await _judgeService.Submit(req));
+        }
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetByID(int id)
+        {
+            var result = await _judgeService.GetByID(id);
+            return Ok(result);
         }
     }
 }

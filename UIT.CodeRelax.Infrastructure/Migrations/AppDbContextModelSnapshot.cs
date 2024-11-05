@@ -111,6 +111,10 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("explaination");
 
+                    b.Property<string>("FunctionName")
+                        .HasColumnType("text")
+                        .HasColumnName("function_name");
+
                     b.Property<int>("NumOfAcceptance")
                         .HasColumnType("integer")
                         .HasColumnName("num_of_acceptance");
@@ -118,6 +122,10 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                     b.Property<int>("NumOfSubmission")
                         .HasColumnType("integer")
                         .HasColumnName("num_of_submission");
+
+                    b.Property<string>("ReturnType")
+                        .HasColumnType("text")
+                        .HasColumnName("return_type");
 
                     b.Property<string>("Title")
                         .IsRequired()

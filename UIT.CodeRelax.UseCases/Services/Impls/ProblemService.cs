@@ -37,7 +37,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
 
-                foreach (var testCase in testCases)
+                foreach (var testCase in testCases.Data)
                 {
 
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
@@ -109,17 +109,28 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public async Task<IEnumerable<TestcaseRes>> GetTestCase(int problemID)
+
+        public async Task<APIResponse<IEnumerable<TestcaseRes>>> GetTestCase(int problemID)
         {
             try
             {
                 var testcase = await _testcaseRepository.GetByProblemIDAsync(problemID);
 
-                return testcase;
+                return new APIResponse<IEnumerable<TestcaseRes>>
+                {
+                    StatusCode = 200,
+                    Message = "Success",
+                    Data = testcase
+                };
             }
             catch (Exception ex)
             {
-                throw ex;
+                return new APIResponse<IEnumerable<TestcaseRes>>
+                {
+                    StatusCode = 500,
+                    Message = ex.Message,
+                    Data = null
+                };
             }
         }
 
@@ -128,7 +139,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             string fullSourceCode = "";
             var tempPath = Path.GetTempFileName();
             var problem = await _problemRepository.GetByIDAsync(problemId);
-            string functionName = Converter.ToPascalCase(problem.Title);
+            string functionName = problem.FunctionName;
 
             var inputData = JsonConvert.DeserializeObject<JObject>(param);
 
@@ -147,18 +158,26 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             if (language == "Java")
             {
                 fullSourceCode = $@"
-                   import java.util.HashMap;
-                   import java.util.Map;
+                    import java.util.HashMap;
+                    import java.util.Map;
+                    import java.util.Arrays;  // Import Arrays for array printing
 
-                   public class Solution {{
+                    public class Solution {{
 
-                     public static void main(String[] args) {{
-                         {convertedParams}  // Khởi tạo các tham số đầu vào từ JSON
-                         System.out.println({functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))}));
-                     }}
+                      public static void main(String[] args) {{
+                          {convertedParams}  // Initialize input parameters from JSON
 
-                     {sourceCode}
-                   }}";
+                          // Print the result with Arrays.toString if needed
+                          System.out.println(
+                              {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))}) instanceof int[] 
+                                  ? Arrays.toString({functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))})) 
+                                  : {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))})
+                          );
+                      }}
+
+                      {sourceCode}
+                    }}";
+
 
                 var publicClassLine = fullSourceCode.Split('\n').FirstOrDefault(line => line.Contains("public class"));
                 if (publicClassLine != null)
@@ -212,8 +231,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
             else if (language == "Python")
             {
+                string[] lines = convertedParams.Split('\n');
+                string numsValue = lines[0].Split('=')[1].Trim();
+                string targetValue = lines[1].Split('=')[1].Trim();
+
+                // Format the params as function arguments
+                string formattedParams = $"{numsValue}, {targetValue}";
                 fullSourceCode = $"{sourceCode}" +
-                                 $"\nprint({functionName}({convertedParams}))";
+                                 $"\nprint({functionName}({formattedParams}))";
             }
             else
             {
@@ -318,6 +343,30 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Output = output,
                 Errors = errors
             };
+        }
+
+        public async Task<APIResponse<GetProblemRes>> GetByID(int problemID)
+        {
+            try
+            {
+                var problem = await _problemRepository.GetByIDAsync(problemID);
+                return new APIResponse<GetProblemRes>
+                {
+                    StatusCode = 200,
+                    Message = "Success",
+                    Data = problem
+                };
+            }
+
+            catch (Exception ex)
+            {
+                return new APIResponse<GetProblemRes>
+                {
+                    StatusCode = 500,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
         }
     }
 }
