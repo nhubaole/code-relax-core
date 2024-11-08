@@ -25,7 +25,11 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("num_of_acceptance")]
         public int NumOfAcceptance { get; set; } = 0;
         [Column("num_of_submission")]
-        public int NumOfSubmission { get; set; } = 0;
+        public int NumOfSubmission { get; set; }
+        [Column("function_name")]
+        public string? FunctionName { get; set; }
+        [Column("return_type")]
+        public string? ReturnType { get; set; }
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }  = DateTime.Now;
 

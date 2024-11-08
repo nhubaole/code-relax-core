@@ -35,25 +35,17 @@ namespace UIT.CodeRelax.UseCases.Helper
             return string.Concat(words);
         }
 
-        public static string DictionaryValuesToString(Dictionary<dynamic, dynamic> dictionary)
+        public static string ToCamelCase(string input)
         {
-            StringBuilder outputString = new StringBuilder();
-            foreach (var pair in dictionary)
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+            string[] words = input.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            for (int i = 0; i < words.Length; i++)
             {
-                if (pair.Value is string)
-                {
-                    outputString.Append("\"").Append(pair.Value).Append("\", ");
-                }
-                else
-                {
-                    outputString.Append(pair.Value).Append(", ");
-                }
+                words[i] = textInfo.ToTitleCase(words[i].ToLower());
             }
-            if (outputString.Length > 0)
-            {
-                outputString.Length -= 2;
-            }
-            return outputString.ToString();
+
+            return words[0].ToLower() + string.Concat(words.Skip(1));
         }
 
 
