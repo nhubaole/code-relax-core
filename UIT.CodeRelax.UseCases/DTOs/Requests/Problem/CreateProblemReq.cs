@@ -16,6 +16,11 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Problem
         public string Title { get; set; } = String.Empty;
         public string? Explaination { get; set; }
         public int Difficulty { get; set; }
+
+        public int NumOfSubmission { get; set; }
+        //public string? FunctionName { get; set; } = String.Empty;
+        //public string? ReturnType { get; set; } = String.Empty;
+
         public List<String> Tags { get; set; } = new List<String>();
 
     }

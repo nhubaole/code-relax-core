@@ -372,9 +372,8 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
-    }
-}
-        }
+    
+        
 
         public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
         {
