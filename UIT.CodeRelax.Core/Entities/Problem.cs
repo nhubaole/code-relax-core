@@ -23,11 +23,11 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("difficulty")]
         public int Difficulty { get; set; }
         [Column("num_of_acceptance")]
-        public int NumOfAcceptance { get; set; }
+        public int NumOfAcceptance { get; set; } = 0;
         [Column("num_of_submission")]
-        public int NumOfSubmission { get; set; }
+        public int NumOfSubmission { get; set; } = 0;
         [Column("created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }  = DateTime.Now;
 
         // one to many testcase
         public ICollection<Testcase> Testcases { get; set; } = new List<Testcase>();

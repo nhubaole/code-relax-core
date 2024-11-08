@@ -13,12 +13,12 @@ namespace UIT.CodeRelax.Core.Entities
     {
         [ForeignKey("Problem")]
         [Column("problem_id")]
-        public int Problem_id { get; set; }
+        public int ProblemId { get; set; }
         public Problem Problem { get; set; }
 
         [ForeignKey("Tag")]
         [Column("tag_id")]
-        public int Tag_id { get; set; }
+        public int TagId { get; set; }
         public Tag Tag { get; set; }
 
     }

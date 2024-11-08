@@ -26,10 +26,10 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProblemPackage>()
-                .HasKey(pp => new { pp.Package_Id, pp.Problem_id });
+                .HasKey(pp => new { pp.PackageId, pp.ProblemId });
 
             modelBuilder.Entity<ProblemTag>()
-                .HasKey(pt => new { pt.Problem_id, pt.Tag_id });
+                .HasKey(pt => new { pt.ProblemId, pt.TagId });
 
             modelBuilder.Entity<SubmissionResult>()
                 .HasKey(sr => new { sr.SubmissionId, sr.PassedTestcaseId });
