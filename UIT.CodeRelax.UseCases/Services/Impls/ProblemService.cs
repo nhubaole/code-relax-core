@@ -8,7 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
+using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
@@ -22,6 +25,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     {
         private readonly IProblemRepository _problemRepository;
         private readonly ITestcaseRepository _testcaseRepository;
+        private string errorMessage = string.Empty;
         public ProblemService(IProblemRepository problemRepository, ITestcaseRepository testcaseRepository)
         {
             _problemRepository = problemRepository;
@@ -367,6 +371,61 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     Data = null
                 };
             }
+        }
+    
+        
+
+        public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
+        {
+            try
+            {
+                Problem problem = new Problem() { 
+                    Title = req.Title,
+                    Explaination = req.Explaination,
+                    Difficulty = req.Difficulty,
+                };
+
+                Problem newPro = await _problemRepository.CreateNewProblem(problem, req.Tags);
+
+                if (newPro != null)
+                {
+                    return new APIResponse<GetProblemRes>
+                    {
+                        StatusCode = 200,
+                        Message = "Success",
+                        Data = new GetProblemRes()
+                        {
+                            Id = newPro.Id,
+                            Title = newPro.Title,
+                            Explaination = newPro.Explaination,
+                            Difficulty = newPro.Difficulty,
+                            NumOfAcceptance = 0,
+                            NumOfSubmission = 0,
+                            CreatedAt = newPro.CreatedAt,
+
+                        },
+                    };
+                }
+
+                return new APIResponse<GetProblemRes>
+                {
+                    StatusCode = 400,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    Data = null,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<GetProblemRes>
+                {
+                    StatusCode = 400,
+                    Message = ex.Message,
+                    Data = null,
+                };
+                throw new Exception("ProblemService: An error occurred while creating problem\n", ex);
+            }
+            finally { errorMessage = String.Empty; }
         }
     }
 }

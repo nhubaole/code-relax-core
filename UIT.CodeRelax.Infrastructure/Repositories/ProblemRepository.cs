@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.Infrastructure.DataAccess;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.Repositories;
 
@@ -16,10 +17,59 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
-        public ProblemRepository(AppDbContext dbContext, IMapper mapper)
+        private readonly ITagRespository _tagRespository;
+        public ProblemRepository(AppDbContext dbContext, IMapper mapper, ITagRespository tagRespository)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _tagRespository = tagRespository;
+        }
+
+        public async Task<Problem> CreateNewProblem(Problem problemReq, List<string> tags)
+        {
+            try
+            {
+                Problem problem = new Problem() { 
+                    Title = problemReq.Title,
+                    Explaination = problemReq.Explaination,
+                    Difficulty = problemReq.Difficulty,
+                    CreatedAt = DateTime.UtcNow
+
+                } ;
+
+                await _dbContext.Problems.AddAsync(problem);
+                await _dbContext.SaveChangesAsync();    
+
+                if(tags.Count() > 0)
+                {
+                    foreach(string tag in tags) {
+                        int tagId = await _tagRespository.GetIdByName(tag);
+
+                        if(tagId != -1)
+                        {
+                            var problemTag = new ProblemTag
+                            {
+                                ProblemId = problem.Id,
+                                TagId = tagId
+                            };
+
+                            await _dbContext.ProblemTags.AddAsync(problemTag);
+                            await _dbContext.SaveChangesAsync();
+                        }
+                        
+
+                        Console.WriteLine("Addede to ProblemTag: {0} : {1}", problem.Id, tagId);
+                    }
+
+                }
+
+                return problem;
+
+            } 
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
         public async Task<IEnumerable<GetProblemRes>> GetAllAsync()
         {
