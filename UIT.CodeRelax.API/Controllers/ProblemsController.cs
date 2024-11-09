@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
+using UIT.CodeRelax.UseCases.DTOs.Requests;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
+using UIT.CodeRelax.UseCases.Services.Impls;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers
@@ -11,10 +13,12 @@ namespace UIT.CodeRelax.API.Controllers
     public class ProblemsController : ControllerBase
     {
         private readonly IProblemService _judgeService;
+        private readonly IProblemService _problemService;
 
-        public ProblemsController(IProblemService judgeService)
+        public ProblemsController(IProblemService judgeService, IProblemService problemService)
         {
             _judgeService = judgeService;
+            _problemService = problemService;
         }
 
         /// <summary>
@@ -40,11 +44,26 @@ namespace UIT.CodeRelax.API.Controllers
         {
             return Ok(await _judgeService.Submit(req));
         }
+        
         [HttpGet("{id}")]
         public async Task<ActionResult> GetByID(int id)
         {
             var result = await _judgeService.GetByID(id);
             return Ok(result);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateProblem([FromBody] CreateProblemReq req)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await _problemService.CreateNewProblem(req));
+
+        }
+
+
     }
 }

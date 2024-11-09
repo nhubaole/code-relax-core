@@ -14,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<ITestcaseRepository, TestcaseRepository>();
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
+
+builder.Services.AddScoped<ITagRespository, TagRepository>();
 builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
 
 
