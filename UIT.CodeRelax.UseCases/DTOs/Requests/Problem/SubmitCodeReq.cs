@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIT.CodeRelax.UseCases.DTOs.Requests
+namespace UIT.CodeRelax.UseCases.DTOs.Requests.Problem
 {
     public class SubmitCodeReq
     {

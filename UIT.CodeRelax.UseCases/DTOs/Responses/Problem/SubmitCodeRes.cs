@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace UIT.CodeRelax.UseCases.DTOs.Responses.Judge
+namespace UIT.CodeRelax.UseCases.DTOs.Responses.Problem
 {
     public class SubmitCodeRes
     {

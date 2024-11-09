@@ -31,16 +31,16 @@ namespace UIT.CodeRelax.Core.Entities
         [ForeignKey("Problem")]
         [Column("problem_id")]
         public int ProblemId { get; set; }
-        public Problem Problem { get; set; }
+        public Problem? Problem { get; set; }
 
 
         [ForeignKey("User")]
         [Column("user_id")]
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         //one to many submission_result
-        public ICollection<SubmissionResult> SubmissionResults { get; } = new List<SubmissionResult>();
+        public ICollection<SubmissionResult>? SubmissionResults { get; } = new List<SubmissionResult>();
 
     }
 }
