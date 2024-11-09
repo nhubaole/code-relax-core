@@ -12,7 +12,6 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
-using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
 using UIT.CodeRelax.UseCases.Helper;
@@ -372,14 +371,15 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
-    
-        
+
+
 
         public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
         {
             try
             {
-                Problem problem = new Problem() { 
+                Problem problem = new Problem()
+                {
                     Title = req.Title,
                     Explaination = req.Explaination,
                     Difficulty = req.Difficulty,

@@ -16,10 +16,12 @@ builder.Services.AddScoped<ITestcaseRepository, TestcaseRepository>();
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
 
 builder.Services.AddScoped<ITagRespository, TagRepository>();
+builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISubmissionService, SubmissionService>();
 builder.Services.AddAutoMapper(typeof(AppProfile));
 
 //config log 

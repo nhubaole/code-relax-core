@@ -3,7 +3,6 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
-using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
 using UIT.CodeRelax.UseCases.DTOs.Responses.User;
 
