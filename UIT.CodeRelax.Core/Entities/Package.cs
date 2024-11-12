@@ -25,7 +25,24 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; }
+
+
         //relation one to many with problem package 
         public ICollection<ProblemPackage> ProblemPackages { get; set; } = new List<ProblemPackage>();
+        public int GetDaysSinceUpdated()
+        {
+            DateTime currentDate = DateTime.Now;
+            TimeSpan timeSpan = currentDate - UpdatedAt;
+            return timeSpan.Days;
+        }
+
+        //Get level 
+        public IEnumerable<int> GetDifficulties()
+        {
+            return ProblemPackages.Select(pp => pp.Problem.Difficulty).Distinct();
+        }
+
     }
 }

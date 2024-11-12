@@ -20,6 +20,9 @@ namespace UIT.CodeRelax.UseCases.Repositories
         {
             try
             {
+                package.CreatedAt = DateTime.UtcNow;
+                package.UpdatedAt = DateTime.UtcNow;
+
                 await _dbContext.Packages.AddAsync(package);
                 await _dbContext.SaveChangesAsync();
 
@@ -64,6 +67,20 @@ namespace UIT.CodeRelax.UseCases.Repositories
             {
                 throw ;
             }
+        }
+
+        public async Task<List<ProblemPackage>> LoadProblemPackagesAsync(Package package)
+        {
+            try
+            {
+                if (package != null && package.ProblemPackages.Count == 0)
+                {
+                    return await _dbContext.ProblemPackages.
+                        Include(p => p.PackageId == package.Id)
+                        .ToListAsync();
+                }
+                return null;
+            } catch (Exception ex) { throw;  }
         }
     }
 }

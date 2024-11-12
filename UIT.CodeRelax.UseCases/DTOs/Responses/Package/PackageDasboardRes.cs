@@ -8,10 +8,12 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Package
 {
     public class PackageDasboardRes
     {
-        public string Title { get; set; }   
-        public string UpdatedAgo { get; set; }
-        public List<int> Levels { get; set; }   
-        public int NumberParticipants { get; set; } 
+        public bool Success { get; set; }
+        public int Id { get; set; } 
+        public string Content { get; set; }
+        public string UpdatedAgo { get; set; } = "No content";
+        public IEnumerable<int> Levels { get; set; }  = new List<int>();
+        public int NumberParticipants { get; set; } = 0;
 
     }
 }

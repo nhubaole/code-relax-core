@@ -11,8 +11,9 @@ namespace UIT.CodeRelax.UseCases.Repositories
     {
         public Task<IEnumerable<Package>> GetAllAsync();
         public Task<Package> GetByIDAsync(int id);
-
         public Task<Package> CreateNewPackage(Package package);
 
+
+        public Task<List<ProblemPackage>> LoadProblemPackagesAsync(Package package);
     }
 }

@@ -20,8 +20,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     {
         private readonly IUserRepository userRepository;
         //private readonly ILogger<UserService> logger;
-
-
         public UserService(IUserRepository userRepository) { 
             this.userRepository = userRepository;
         }
