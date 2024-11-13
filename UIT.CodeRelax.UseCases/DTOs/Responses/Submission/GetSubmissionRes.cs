@@ -10,10 +10,11 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Submission
 {
     public class GetSubmissionRes
     {
-        public GetProblemRes Problem { get; set; }
-        public UserProfileRes User { get; set; }
+        public int ID { get; set; }
         public string Code { get; set; }
         public string Language { get; set; }
+        public GetProblemRes Problem { get; set; }
+        public UserProfileRes User { get; set; }
         public int Status { get; set; }
     }
 }

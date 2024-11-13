@@ -15,6 +15,8 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
     public interface IProblemService
     {
         Task<APIResponse<SubmitCodeRes>> Submit(SubmitCodeReq submitCodeReq);
+        Task<APIResponse<SubmitCodeRes>> RunCode(SubmitCodeReq submitCodeReq);
+
         Task<APIResponse<IEnumerable<TestcaseRes>>> GetTestCase(int problemID);
         Task<APIResponse<GetProblemRes>> GetByID(int problemID);
 

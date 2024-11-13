@@ -20,7 +20,7 @@ namespace UIT.CodeRelax.Core.Entities
         public string Code { get; set; }
 
         [Column("language")]
-        public int Language { get; set; }
+        public string Language { get; set; }
 
         [Column("status")]
         public int Status { get; set; }

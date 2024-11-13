@@ -12,7 +12,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Submission
         public int ProblemID { get; set; }
         public int UserID { get; set; }
         public string Code { get; set; }
-        public int Language { get; set; }
+        public string Language { get; set; }
         public int Status { get; set; }
     }
 }

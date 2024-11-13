@@ -34,7 +34,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     ProblemId = req.ProblemID,
                     UserId = req.UserID,
                     Code = req.Code,
-                    Language = (int)req.Language,
+                    Language = req.Language,
                     CreatedAt = DateTime.UtcNow
                 };
 
@@ -69,9 +69,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                var submissions = await _dbContext.Submissions.ToArrayAsync();
+                var submissions = await _dbContext.Submissions
+                                        .Include(s => s.Problem)
+                                        .Include(s => s.User)
+                                        .ToListAsync();
 
-                return _mapper.Map<IEnumerable<GetSubmissionRes>>(submissions);
+                return _mapper.Map<List<GetSubmissionRes>>(submissions);
             }
             catch (Exception ex)
             {
@@ -83,7 +86,10 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                var submission = await _dbContext.Submissions.FirstOrDefaultAsync(x => x.Id == id);
+                var submission = await _dbContext.Submissions
+                                        .Include(s => s.Problem)
+                                        .Include(s => s.User)
+                                        .FirstOrDefaultAsync(x => x.Id == id);
                 return _mapper.Map<GetSubmissionRes>(submission);
             }
             catch (Exception ex)

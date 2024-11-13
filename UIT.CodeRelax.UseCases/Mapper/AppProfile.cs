@@ -8,6 +8,7 @@ using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Submission;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
+using UIT.CodeRelax.UseCases.DTOs.Responses.User;
 
 namespace UIT.CodeRelax.UseCases.Mapper
 {
@@ -18,6 +19,7 @@ namespace UIT.CodeRelax.UseCases.Mapper
             CreateMap<Problem, GetProblemRes>().ReverseMap();
             CreateMap<Testcase, TestcaseRes>().ReverseMap();
             CreateMap<Submission, GetSubmissionRes>().ReverseMap();
+            CreateMap<User, UserProfileRes>();
         }
     }
 }
