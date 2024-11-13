@@ -29,11 +29,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginReq loginReq)
         {
-
-
             var response = await userService.Login(loginReq);
-
-
             return ApiOK(response);
         }
 
@@ -41,9 +37,6 @@ namespace UIT.CodeRelax.API.Controllers
         public async Task<IActionResult> GetUserByID(int UserId)
         {
             var response = await userService.GetUserById(UserId);
-
-
-
             return ApiOK(response);
         }
 
