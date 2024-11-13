@@ -9,7 +9,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubmissionsController : ControllerBase
+    public class SubmissionsController : ControllerExtensions
     {
         private readonly ISubmissionService _submissionService;
 
@@ -27,7 +27,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Create(CreateSubmissionReq req)
         {
-            return Ok(await _submissionService.Create(req));
+            return ApiOK(await _submissionService.Create(req));
         }
 
 
@@ -38,10 +38,10 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(200, Type = typeof(GetSubmissionRes))]
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetByID(int id)
+        public async Task<IActionResult> GetByID(int id)
         {
             var result = await _submissionService.GetByID(id);
-            return Ok(result);
+            return ApiOK(result);
         }
 
         /// <summary>
@@ -50,10 +50,10 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(200, Type = typeof(IEnumerable<GetSubmissionRes>))]
         [HttpGet]
-        public async Task<ActionResult> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             var result = await _submissionService.GetAll();
-            return Ok(result);
+            return ApiOK(result);
         }
 
         /// <summary>
@@ -63,10 +63,10 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(200, Type = typeof(bool))]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var result = await _submissionService.Delete(id);
-            return Ok(result);
+            return ApiOK(result);
         }
     }
 }

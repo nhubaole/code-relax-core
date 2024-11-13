@@ -10,7 +10,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class ProblemsController : ControllerBase
+    public class ProblemsController : ControllerExtensions
     {
         private readonly IProblemService _judgeService;
         private readonly IProblemService _problemService;
@@ -30,7 +30,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetTestcase(int problemID)
         {
-            return Ok(await _judgeService.GetTestCase(problemID));
+            return ApiOK(await _judgeService.GetTestCase(problemID));
         }
 
         /// <summary>
@@ -42,25 +42,33 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Submit(SubmitCodeReq req)
         {
-            return Ok(await _judgeService.Submit(req));
+            return ApiOK(await _judgeService.Submit(req));
         }
-        
+
+        /// <summary>
+        /// Run Code
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(SubmitCodeRes))]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RunCode(SubmitCodeReq req)
+        {
+            return ApiOK(await _judgeService.RunCode(req));
+        }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetByID(int id)
+        public async Task<IActionResult> GetByID(int id)
         {
             var result = await _judgeService.GetByID(id);
-            return Ok(result);
+            return ApiOK(result);
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateProblem([FromBody] CreateProblemReq req)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            return Ok(await _problemService.CreateNewProblem(req));
+            return ApiOK(await _problemService.CreateNewProblem(req));
 
         }
 

@@ -29,7 +29,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<bool>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = isCreated
                 };
@@ -38,7 +38,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<bool>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = false
                 };
@@ -53,7 +53,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<bool>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = isDeleted
                 };
@@ -62,7 +62,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<bool>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = false
                 };
@@ -77,7 +77,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<IEnumerable<GetSubmissionRes>>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = submissions
                 };
@@ -86,7 +86,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<IEnumerable<GetSubmissionRes>>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = null
                 };
@@ -101,7 +101,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<GetSubmissionRes>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = submission
                 };
@@ -110,7 +110,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<GetSubmissionRes>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = null
                 };
