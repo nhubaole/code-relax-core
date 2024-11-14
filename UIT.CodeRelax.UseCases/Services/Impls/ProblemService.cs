@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
@@ -492,6 +493,37 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             catch (Exception ex)
             {
                 return new APIResponse<SubmitCodeRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll()
+        {
+            try
+            {
+                var problems = await _problemRepository.GetAllAsync();
+                if (problems == null || !problems.Any())
+                {
+                    return new APIResponse<IEnumerable<GetProblemRes>>
+                    {
+                        StatusCode = StatusCodeRes.ResourceNotFound,
+                        Message = "No data",
+                        Data = problems
+                    };
+                }
+                return new APIResponse<IEnumerable<GetProblemRes>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = problems
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<GetProblemRes>>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message
