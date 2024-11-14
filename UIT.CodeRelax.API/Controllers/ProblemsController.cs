@@ -12,12 +12,10 @@ namespace UIT.CodeRelax.API.Controllers
     [Route("api/v1/[controller]")]
     public class ProblemsController : ControllerExtensions
     {
-        private readonly IProblemService _judgeService;
         private readonly IProblemService _problemService;
 
-        public ProblemsController(IProblemService judgeService, IProblemService problemService)
+        public ProblemsController(IProblemService problemService)
         {
-            _judgeService = judgeService;
             _problemService = problemService;
         }
 
@@ -30,7 +28,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetTestcase(int problemID)
         {
-            return ApiOK(await _judgeService.GetTestCase(problemID));
+            return ApiOK(await _problemService.GetTestCase(problemID));
         }
 
         /// <summary>
@@ -42,7 +40,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Submit(SubmitCodeReq req)
         {
-            return ApiOK(await _judgeService.Submit(req));
+            return ApiOK(await _problemService.Submit(req));
         }
 
         /// <summary>
@@ -54,13 +52,32 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> RunCode(SubmitCodeReq req)
         {
-            return ApiOK(await _judgeService.RunCode(req));
+            return ApiOK(await _problemService.RunCode(req));
         }
 
+        /// <summary>
+        /// Get By ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(GetProblemRes))]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id)
         {
-            var result = await _judgeService.GetByID(id);
+            var result = await _problemService.GetByID(id);
+            return ApiOK(result);
+        }
+
+
+        /// <summary>
+        /// Get By ID
+        /// </summary>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(IEnumerable<GetProblemRes>))]
+        [HttpGet()]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _problemService.GetAll();
             return ApiOK(result);
         }
 

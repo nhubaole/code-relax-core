@@ -33,6 +33,9 @@ builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISubmissionService, SubmissionService>();
+
+builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
+builder.Services.AddScoped<IDiscussionService, DiscussionService>();
 builder.Services.AddAutoMapper(typeof(AppProfile));
 
 

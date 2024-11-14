@@ -51,7 +51,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     {
                         return new APIResponse<SignUpRes>
                         {
-                            StatusCode = StatusCodeRes.Success,
+                            StatusCode = StatusCodeRes.ReturnWithData,
                             Message = "Success",
                             Data = new SignUpRes
                             {

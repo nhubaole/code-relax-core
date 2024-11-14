@@ -13,12 +13,12 @@ namespace UIT.CodeRelax.API.Controllers
         {
             if (obj.StatusCode == StatusCodeRes.Success)
             {
-                return Ok(obj.Data);
+                return Ok(obj);
             }
 
             if (obj.StatusCode == StatusCodeRes.ReturnWithData)
             {
-                return Created(string.Empty, obj.Data);
+                return Created(string.Empty, obj);
             }
 
             if (obj.StatusCode == StatusCodeRes.ResourceNotFound || obj.StatusCode == StatusCodeRes.Deny)
@@ -28,10 +28,10 @@ namespace UIT.CodeRelax.API.Controllers
 
             if (obj.StatusCode == StatusCodeRes.InvalidData || obj.StatusCode == StatusCodeRes.ResetContent)
             {
-                return StatusCode(406, obj.Message);
+                return StatusCode(406, obj);
             }
 
-            return StatusCode(500, obj.Message);
+            return StatusCode(500, obj);
         }
 
         //protected IActionResult ApiOK<T>(PagingResponse<T> obj)
