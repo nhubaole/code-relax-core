@@ -20,7 +20,7 @@ namespace UIT.CodeRelax.Core.Entities
         public string Code { get; set; }
 
         [Column("language")]
-        public int Language { get; set; }
+        public string Language { get; set; }
 
         [Column("status")]
         public int Status { get; set; }
@@ -31,16 +31,16 @@ namespace UIT.CodeRelax.Core.Entities
         [ForeignKey("Problem")]
         [Column("problem_id")]
         public int ProblemId { get; set; }
-        public Problem Problem { get; set; }
+        public Problem? Problem { get; set; }
 
 
         [ForeignKey("User")]
         [Column("user_id")]
         public int UserId { get; set; }
-        public User User { get; set; }
+        public User? User { get; set; }
 
         //one to many submission_result
-        public ICollection<SubmissionResult> SubmissionResults { get; } = new List<SubmissionResult>();
+        public ICollection<SubmissionResult>? SubmissionResults { get; } = new List<SubmissionResult>();
 
     }
 }

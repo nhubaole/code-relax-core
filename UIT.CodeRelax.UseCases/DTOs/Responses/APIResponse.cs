@@ -8,7 +8,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses
 {
     public class APIResponse<T>
     {
-        public int StatusCode { get; set; }
+        public StatusCodeRes StatusCode { get; set; }
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
     }

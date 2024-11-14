@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
@@ -12,7 +13,6 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
-using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Testcase;
 using UIT.CodeRelax.UseCases.Helper;
@@ -52,7 +52,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         isAccept = false;
                         return new APIResponse<SubmitCodeRes>
                         {
-                            StatusCode = 400,
+                            StatusCode = StatusCodeRes.InvalidData,
                             Message = "Compile Error",
                             Data = new SubmitCodeRes
                             {
@@ -82,7 +82,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     return new APIResponse<SubmitCodeRes>
                     {
-                        StatusCode = 204,
+                        StatusCode = StatusCodeRes.Deny,
                         Message = "One or more test case is failed",
                         Data = new SubmitCodeRes
                         {
@@ -94,7 +94,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<SubmitCodeRes>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "All test case passed",
                     Data = new SubmitCodeRes
                     {
@@ -107,7 +107,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<SubmitCodeRes>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message
                 };
             }
@@ -122,7 +122,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<IEnumerable<TestcaseRes>>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = testcase
                 };
@@ -131,7 +131,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<IEnumerable<TestcaseRes>>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = null
                 };
@@ -356,7 +356,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 var problem = await _problemRepository.GetByIDAsync(problemID);
                 return new APIResponse<GetProblemRes>
                 {
-                    StatusCode = 200,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = problem
                 };
@@ -366,20 +366,21 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<GetProblemRes>
                 {
-                    StatusCode = 500,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = null
                 };
             }
         }
-    
-        
+
+
 
         public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
         {
             try
             {
-                Problem problem = new Problem() { 
+                Problem problem = new Problem()
+                {
                     Title = req.Title,
                     Explaination = req.Explaination,
                     Difficulty = req.Difficulty,
@@ -387,45 +388,147 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 Problem newPro = await _problemRepository.CreateNewProblem(problem, req.Tags);
 
-                if (newPro != null)
-                {
-                    return new APIResponse<GetProblemRes>
-                    {
-                        StatusCode = 200,
-                        Message = "Success",
-                        Data = new GetProblemRes()
-                        {
-                            Id = newPro.Id,
-                            Title = newPro.Title,
-                            Explaination = newPro.Explaination,
-                            Difficulty = newPro.Difficulty,
-                            NumOfAcceptance = 0,
-                            NumOfSubmission = 0,
-                            CreatedAt = newPro.CreatedAt,
-
-                        },
-                    };
-                }
-
                 return new APIResponse<GetProblemRes>
                 {
-                    StatusCode = 400,
-                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = null,
-                };
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = new GetProblemRes()
+                    {
+                        Id = newPro.Id,
+                        Title = newPro.Title,
+                        Explaination = newPro.Explaination,
+                        Difficulty = newPro.Difficulty,
+                        NumOfAcceptance = 0,
+                        NumOfSubmission = 0,
+                        CreatedAt = newPro.CreatedAt,
 
+                    },
+                };
             }
             catch (Exception ex)
             {
                 return new APIResponse<GetProblemRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = null,
                 };
                 throw new Exception("ProblemService: An error occurred while creating problem\n", ex);
             }
             finally { errorMessage = String.Empty; }
+        }
+
+        public async Task<APIResponse<SubmitCodeRes>> RunCode(SubmitCodeReq req)
+        {
+            try
+            {
+                var testCases = await GetTestCase(req.ProblemId);
+                var exampleTestCases = testCases.Data.Where(x => x.IsExample).ToList();
+                var result = new SubmitCodeRes();
+                bool isAccept = true;
+                var outputs = new List<dynamic>();
+
+                foreach (var testCase in exampleTestCases)
+                {
+
+                    var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
+
+                    var response = await RunCode(sourceFilePath, req.Language);
+                    if (response.Success is false)
+                    {
+                        isAccept = false;
+                        return new APIResponse<SubmitCodeRes>
+                        {
+                            StatusCode = StatusCodeRes.InvalidData,
+                            Message = "Compile Error",
+                            Data = new SubmitCodeRes
+                            {
+                                Success = false,
+                                Output = response.Errors
+                            }
+                        };
+                    }
+
+                    // Parse testCase.Output to compare
+                    var expectedOutput = JsonConvert.DeserializeObject<Dictionary<string, object>>(testCase.Output)["output"];
+                    if (!Comparer.CompareOutputs(response.Output, expectedOutput))
+                    {
+                        isAccept = false;
+                        outputs.Add(response.Output);
+                    }
+                    else
+                    {
+                        outputs.Add(response.Output);
+                    }
+
+                    // Clean up source file after execution
+                    File.Delete(sourceFilePath);
+                }
+
+                if (!isAccept)
+                {
+                    return new APIResponse<SubmitCodeRes>
+                    {
+                        StatusCode = StatusCodeRes.Deny,
+                        Message = "One or more test case is failed",
+                        Data = new SubmitCodeRes
+                        {
+                            Success = false,
+                            Output = outputs[0] // Return the output that failed
+                        }
+                    };
+                }
+
+                return new APIResponse<SubmitCodeRes>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "All test case passed",
+                    Data = new SubmitCodeRes
+                    {
+                        Success = true,
+                        Output = outputs[0] // Return the first successful output
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<SubmitCodeRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll()
+        {
+            try
+            {
+                var problems = await _problemRepository.GetAllAsync();
+                if (problems == null || !problems.Any())
+                {
+                    return new APIResponse<IEnumerable<GetProblemRes>>
+                    {
+                        StatusCode = StatusCodeRes.ResourceNotFound,
+                        Message = "No data",
+                        Data = problems
+                    };
+                }
+                return new APIResponse<IEnumerable<GetProblemRes>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = problems
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<GetProblemRes>>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

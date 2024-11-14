@@ -9,7 +9,6 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
-using UIT.CodeRelax.UseCases.DTOs.Responses.Judge;
 using UIT.CodeRelax.UseCases.DTOs.Responses.User;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
@@ -20,17 +19,20 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     {
         private readonly IUserRepository userRepository;
         //private readonly ILogger<UserService> logger;
-        public UserService(IUserRepository userRepository) { 
+
+
+        public UserService(IUserRepository userRepository)
+        {
             this.userRepository = userRepository;
         }
 
         private string errorMessage = null;
-        
+
         public async Task<APIResponse<SignUpRes>> SignUp(SignUpReq signUpReq)
         {
             try
             {
-                
+
                 if (!IsValidEmail(signUpReq.Email))
                 {
                     errorMessage = "Invalid email format.";
@@ -49,7 +51,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     {
                         return new APIResponse<SignUpRes>
                         {
-                            StatusCode = 200,
+                            StatusCode = StatusCodeRes.ReturnWithData,
                             Message = "Success",
                             Data = new SignUpRes
                             {
@@ -59,12 +61,12 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             }
                         };
                     }
-                    
+
                 }
 
                 return new APIResponse<SignUpRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                     Data = new SignUpRes
                     {
@@ -77,8 +79,8 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<SignUpRes>
                 {
-                    StatusCode = 400, 
-                    Message = ex.Message, 
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
                     Data = new SignUpRes
                     {
                         Success = false
@@ -88,16 +90,16 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
             finally { errorMessage = null; }
         }
-        
 
-        public bool IsValidEmail (string mail)
+
+        public bool IsValidEmail(string mail)
         {
             var emailRegex = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
             return Regex.IsMatch(mail, emailRegex);
 
         }
 
-        public bool IsValidPassword (string pass)
+        public bool IsValidPassword(string pass)
         {
             return pass.Length > 8 && pass.Any(Char.IsUpper) && pass.Any(Char.IsLower) && pass.Any(Char.IsDigit);
         }
@@ -112,7 +114,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     return new APIResponse<UserProfileRes>
                     {
-                        StatusCode = 200,
+                        StatusCode = StatusCodeRes.Success,
                         Message = "Success",
                         Data = new UserProfileRes
                         {
@@ -124,13 +126,13 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Role = user.Role,
                             CreatedAt = user.CreatedAt
 
-                         }
+                        }
                     };
-                }    
+                }
 
                 return new APIResponse<UserProfileRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                     Data = new UserProfileRes
                     {
@@ -143,7 +145,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<UserProfileRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = new UserProfileRes
                     {
@@ -165,7 +167,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     return new APIResponse<LoginRes>
                     {
-                        StatusCode = 200,
+                        StatusCode = StatusCodeRes.Success,
                         Message = "Success",
                         Data = new LoginRes
                         {
@@ -177,7 +179,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<LoginRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                     Data = new LoginRes
                     {
@@ -190,7 +192,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<LoginRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                     Data = new LoginRes
                     {
@@ -206,7 +208,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                bool isExisted = (await userRepository.GetUserById(userProfileReq.Id))!= null;
+                bool isExisted = (await userRepository.GetUserById(userProfileReq.Id)) != null;
 
                 if (isExisted)
                 {
@@ -237,7 +239,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         {
                             return new APIResponse<UserProfileRes>
                             {
-                                StatusCode = 200,
+                                StatusCode = StatusCodeRes.Success,
                                 Message = "Success",
                                 Data = new UserProfileRes
                                 {
@@ -253,7 +255,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             };
                         }
                     }
-                    
+
                 }
                 else
                 {
@@ -263,7 +265,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<UserProfileRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                     Data = new UserProfileRes
                     {
@@ -277,7 +279,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 return new APIResponse<UserProfileRes>
                 {
-                    StatusCode = 400,
+                    StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = new UserProfileRes
                     {

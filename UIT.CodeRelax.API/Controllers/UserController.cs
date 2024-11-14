@@ -11,7 +11,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : ControllerExtensions
     {
         private readonly IUserService userService;
 
@@ -23,82 +23,31 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost("Signup")]
         public async Task<IActionResult> SignUp(SignUpReq signUpReq)
         {
-            return Ok(await userService.SignUp(signUpReq));
+            return ApiOK(await userService.SignUp(signUpReq));
         }
 
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginReq loginReq)
         {
-            if (loginReq == null || string.IsNullOrEmpty(loginReq.Email) || string.IsNullOrEmpty(loginReq.Password))
-            {
-                return BadRequest(new APIResponse<LoginRes>
-                {
-                    StatusCode = 400,
-                    Message = "Email and Password must not be empty",
-                    Data = null
-                });
-            }
-
             var response = await userService.Login(loginReq);
-
-            if (response == null || !response.Data.Success)
-            {
-                return NotFound(new APIResponse<UserProfileRes>
-                {
-                    StatusCode = 404,
-                    Message = "Email or Password is wrong",
-                    Data = null
-                });
-            }
-
-            return Ok(response);
+            return ApiOK(response);
         }
 
         [HttpGet("{UserId}")]
         public async Task<IActionResult> GetUserByID(int UserId)
         {
             var response = await userService.GetUserById(UserId);
-
-            if (response == null || !response.Data.Success)
-            {
-                return NotFound(new APIResponse<UserProfileRes>
-                {
-                    StatusCode = 404,
-                    Message = "User not found",
-                    Data = null
-                });
-            }
-
-            return Ok(response);
+            return ApiOK(response);
         }
 
         [HttpPut("{UserId}")]
         public async Task<IActionResult> UpdateUser(int UserId, [FromBody] UserProfileReq user)
         {
 
-            if (user == null)
-            {
-                return BadRequest(new APIResponse<UserProfileRes>
-                {
-                    StatusCode = 400,
-                    Message = "User data must not be null",
-                    Data = null
-                });
-            }
-
             var response = await userService.UpdateUserProfile(user);
 
-            if (response == null)
-            {
-                return BadRequest(new APIResponse<UserProfileRes>
-                {
-                    StatusCode = 400,
-                    Message = "Failed to update",
-                    Data = null
-                });
-            }
 
-            return Ok(response);
+            return ApiOK(response);
         }
     }
 }

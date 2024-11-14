@@ -14,7 +14,7 @@ namespace UIT.CodeRelax.Core.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
-        public int Id { get; set; }
+        public int ID { get; set; }
 
         [Column("content")]
         public string Content { get; set; }
@@ -24,16 +24,18 @@ namespace UIT.CodeRelax.Core.Entities
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
 
         [ForeignKey("User")]
         [Column("user_id")]
-        public int User_id { get; set; }    
+        public int UserID { get; set; }
         public User User { get; set; }
 
         [ForeignKey("Problem")]
         [Column("problem_id")]
-        public int Problem_id { get; set; } 
+        public int ProblemID { get; set; }
         public Problem Problem { get; set; }
     }
 }

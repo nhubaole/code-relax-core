@@ -8,7 +8,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.User
 {
     public class UserProfileRes
     {
-        public bool Success { get; set; }   
+        public bool Success { get; set; }
         public int Id { get; set; }
 
         public string DisplayName { get; set; }
@@ -21,9 +21,9 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.User
 
         public DateTime CreatedAt { get; set; }
 
-        public string Google { get; set; }
-        public string Github { get; set; }
-        public string Facebook { get; set; }
+        public string? Google { get; set; }
+        public string? Github { get; set; }
+        public string? Facebook { get; set; }
 
     }
 }

@@ -1,6 +1,11 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using System.Reflection;
+using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.Infrastructure.Extensions;
 using UIT.CodeRelax.Infrastructure.Repositories;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.Mapper;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Impls;
@@ -11,16 +16,30 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Add request validator
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<IValidator<LoginReq>, LoginReqValidator>();
+
+// Inject services and repository
 builder.Services.AddScoped<IProblemService, ProblemService>();
 builder.Services.AddScoped<ITestcaseRepository, TestcaseRepository>();
 builder.Services.AddScoped<IProblemRepository, ProblemRepository>();
 
 builder.Services.AddScoped<ITagRespository, TagRepository>();
+builder.Services.AddScoped<ISubmissionRepository, SubmissionRepository>();
 
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ISubmissionService, SubmissionService>();
+
+builder.Services.AddScoped<IDiscussionRepository, DiscussionRepository>();
+builder.Services.AddScoped<IDiscussionService, DiscussionService>();
 builder.Services.AddAutoMapper(typeof(AppProfile));
+
+
+
 
 //config log 
 builder.Logging.ClearProviders();
