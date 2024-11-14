@@ -20,7 +20,7 @@ namespace UIT.CodeRelax.Core.Entities
         public string Type { get; set; }
 
         [Column("content")]
-        public string Content { get; set; }
+        public string Content { get; set; } 
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
