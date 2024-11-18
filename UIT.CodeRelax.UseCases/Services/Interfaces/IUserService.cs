@@ -13,6 +13,7 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
         Task<APIResponse<SignUpRes>> SignUp(SignUpReq signUpReq);
         Task<APIResponse<LoginRes>> Login(LoginReq loginReq);
         Task<APIResponse<UserProfileRes>> GetUserById(int UserId);
+        Task<APIResponse<IEnumerable<UserProfileRes>>> GetAllUser();
 
         Task<APIResponse<UserProfileRes>> UpdateUserProfile(UserProfileReq userProfileReq);
     }

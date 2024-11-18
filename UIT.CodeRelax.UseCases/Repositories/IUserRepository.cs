@@ -15,11 +15,12 @@ namespace UIT.CodeRelax.UseCases.Repositories
     public interface IUserRepository
     {
         Task<UserProfileRes> GetUserById(int UserId);
-
+        Task<IEnumerable<UserProfileRes>> GetAllAsync();
         Task<SignUpRes> AddUserAsync(SignUpReq signUpReq);
 
         Task<User> UpdateUserAsync(User user);
 
         Task<UserProfileRes> AuthorizeUser(LoginReq loginReq);
+
     }
 }

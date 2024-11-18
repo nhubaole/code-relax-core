@@ -9,7 +9,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Authentication
 {
     public class LoginRes
     {
-        public bool Success { get; set; }
         public string AccessToken { get; set; }
         public UserProfileRes UserProfile { get; set; }
 

@@ -21,6 +21,7 @@ builder.Services.AddControllers();
 // Add request validator
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<IValidator<LoginReq>, LoginReqValidator>();
+builder.Services.AddScoped<IValidator<SignUpReq>, SignUpReqValidator>();
 builder.Services.AddScoped<IValidator<NewPackageReq>, NewPackageReqValidator>();
 
 // Inject services and repository

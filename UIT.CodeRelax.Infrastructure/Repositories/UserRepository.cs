@@ -99,7 +99,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             UserProfileRes userRes = new UserProfileRes();
             if (user != null)
             {
-                userRes.Success = true;
                 userRes.Id = user.Id;
                 userRes.DisplayName = user.DisplayName;
                 userRes.Password = user.Password;
@@ -136,6 +135,28 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             return null;
 
+        }
+
+        public async Task<IEnumerable<UserProfileRes>> GetAllAsync()
+        {
+            try
+            {
+                var users = await _dbContext.Users
+                            .Select(user => new UserProfileRes
+                            {
+                                Id = user.Id,
+                                DisplayName = user.DisplayName,
+                                Email = user.Email,
+                                Role = user.Role,
+                                CreatedAt = user.CreatedAt,
+                            })
+                            .ToListAsync();
+                return users;
+
+            }
+            catch (Exception ex) {
+                return Enumerable.Empty<UserProfileRes>();
+            }
         }
     }
 }

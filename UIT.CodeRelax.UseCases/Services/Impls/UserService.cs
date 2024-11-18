@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,7 +19,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
-        //private readonly ILogger<UserService> logger;
+        private readonly ILogger<UserService> logger;
 
 
         public UserService(IUserRepository userRepository)
@@ -33,45 +34,27 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
 
-                if (!IsValidEmail(signUpReq.Email))
-                {
-                    errorMessage = "Invalid email format.";
-                }
+                var signUpRes = await userRepository.AddUserAsync(signUpReq);
 
-                else if (!IsValidPassword(signUpReq.Password))
+                if (signUpRes != null)
                 {
-                    errorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one digit."; // Lưu thông điệp lỗi cho mật khẩu
-                }
-
-                if (IsValidEmail(signUpReq.Email) && IsValidPassword(signUpReq.Password))
-                {
-                    var signUpRes = await userRepository.AddUserAsync(signUpReq);
-
-                    if (signUpRes != null)
+                    return new APIResponse<SignUpRes>
                     {
-                        return new APIResponse<SignUpRes>
+                        StatusCode = StatusCodeRes.ReturnWithData,
+                        Message = "Success",
+                        Data = new SignUpRes
                         {
-                            StatusCode = StatusCodeRes.ReturnWithData,
-                            Message = "Success",
-                            Data = new SignUpRes
-                            {
-                                Success = true,
-                                DisplayName = signUpReq.DisplayName,
-                                Password = signUpReq.Password,
-                            }
-                        };
-                    }
-
+                            DisplayName = signUpReq.DisplayName,
+                            Password = signUpReq.Password,
+                        }
+                    };
                 }
 
                 return new APIResponse<SignUpRes>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new SignUpRes
-                    {
-                        Success = false
-                    }
+                    Data = null,
                 };
 
             }
@@ -81,10 +64,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new SignUpRes
-                    {
-                        Success = false
-                    }
+                    Data = null,
                 };
                 throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
             }
@@ -118,7 +98,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Message = "Success",
                         Data = new UserProfileRes
                         {
-                            Success = true,
                             Id = UserId,
                             DisplayName = user.DisplayName,
                             Password = user.Password,
@@ -134,10 +113,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
 
             }
@@ -147,10 +122,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
                 throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
             }
@@ -171,7 +142,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Message = "Success",
                         Data = new LoginRes
                         {
-                            Success = true,
                             UserProfile = user
                         }
                     };
@@ -181,10 +151,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new LoginRes
-                    {
-                        Success = false
-                    }
                 };
 
             }
@@ -194,10 +160,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new LoginRes
-                    {
-                        Success = false
-                    }
+
                 };
                 throw new Exception("UserSerrvice: An error occurred while  logging.\n", ex);
             }
@@ -243,7 +206,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                                 Message = "Success",
                                 Data = new UserProfileRes
                                 {
-                                    Success = true,
                                     Id = UpdatedUser.Id,
                                     DisplayName = UpdatedUser.DisplayName,
                                     Password = UpdatedUser.Password,
@@ -267,10 +229,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
 
 
@@ -281,14 +239,35 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
+
                 };
                 throw new Exception("UserSerrvice: An error occurred while updating.\n", ex);
             }
             finally { errorMessage = null; }
+        }
+
+        public async Task<APIResponse<IEnumerable<UserProfileRes>>> GetAllUser()
+        {
+            try
+            {
+                var rs = await userRepository.GetAllAsync();
+
+                return new APIResponse<IEnumerable<UserProfileRes>>()
+                {
+                    StatusCode = StatusCodeRes.ReturnWithData,
+                    Message = "Success",
+                    Data = rs,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<UserProfileRes>>()
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null,
+                };
+            }
         }
     }
 }
