@@ -9,7 +9,7 @@ using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class DiscussionsController : ControllerExtensions
     {
