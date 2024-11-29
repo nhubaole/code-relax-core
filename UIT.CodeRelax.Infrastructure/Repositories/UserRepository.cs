@@ -137,7 +137,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
         }
 
-        public async Task<IEnumerable<UserProfileRes>> GetAllAsync()
+        public async Task<IEnumerable<UserProfileRes>> GetAllUsersAsync()
         {
             try
             {

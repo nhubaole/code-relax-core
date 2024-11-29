@@ -250,7 +250,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                var rs = await userRepository.GetAllAsync();
+                var rs = await userRepository.GetAllUsersAsync();
 
                 return new APIResponse<IEnumerable<UserProfileRes>>()
                 {
