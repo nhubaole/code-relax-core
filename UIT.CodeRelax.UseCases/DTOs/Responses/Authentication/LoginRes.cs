@@ -9,7 +9,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Authentication
 {
     public class LoginRes
     {
-        public string AccessToken { get; set; }
+        public string Token { get; set; }
         public UserProfileRes UserProfile { get; set; }
 
     }

@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,12 +23,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
+        private readonly IConfiguration _config;
         private readonly ILogger<UserService> logger;
 
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
             this.userRepository = userRepository;
+            this._config = configuration;
         }
 
         private string errorMessage = null;
@@ -136,12 +142,15 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 if (user != null)
                 {
+                    string jwt = GenerateJwtToken(user);
+
                     return new APIResponse<LoginRes>
                     {
                         StatusCode = StatusCodeRes.Success,
                         Message = "Success",
                         Data = new LoginRes
                         {
+                            Token = jwt,
                             UserProfile = user
                         }
                     };
@@ -149,7 +158,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<LoginRes>
                 {
-                    StatusCode = StatusCodeRes.InternalError,
+                    StatusCode = StatusCodeRes.Deny,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                 };
 
@@ -268,6 +277,26 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     Data = null,
                 };
             }
+        }
+
+        public string GenerateJwtToken(UserProfileRes loginReq)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, loginReq.DisplayName),
+                new Claim(ClaimTypes.Email, loginReq.Email),
+            };
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
+              _config["Jwt:Issuer"],
+              null,
+              expires: DateTime.Now.AddMinutes(120),
+              signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
