@@ -10,9 +10,10 @@ namespace UIT.CodeRelax.UseCases.Repositories
 {
     public interface IDiscussionRepository
     {
-        Task<bool> CreateAsync(CreateDiscussionReq req);
+        Task<int> CreateAsync(CreateDiscussionReq req);
         Task<bool> UpdateAsync(UpdateDiscussionReq req);
         Task<bool> DeleteAsync(int id);
+        Task<DiscussionRes> GetByIdAsync(int id);
         Task<IEnumerable<DiscussionRes>> GetByProblemIDAsync(int problemID);
     }
 }

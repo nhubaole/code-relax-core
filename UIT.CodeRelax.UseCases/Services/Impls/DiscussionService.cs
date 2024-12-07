@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Discussion;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Discussion;
@@ -20,26 +21,26 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             _discussionRepository = discussionRepository;
         }
 
-        public async Task<APIResponse<bool>> Create(CreateDiscussionReq req)
+        public async Task<APIResponse<int>> Create(CreateDiscussionReq req)
         {
             try
             {
-                var isCreated = await _discussionRepository.CreateAsync(req);
+                var createdID = await _discussionRepository.CreateAsync(req);
 
-                return new APIResponse<bool>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.ReturnWithData,
                     Message = "Success",
-                    Data = isCreated
+                    Data = createdID
                 };
             }
             catch (Exception ex)
             {
-                return new APIResponse<bool>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = false
+                    Data = -1
                 };
             }
         }
@@ -64,6 +65,38 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
                     Data = false
+                };
+            }
+        }
+
+        public async Task<APIResponse<DiscussionRes>> GetByID(int id)
+        {
+            try
+            {
+                var discussions = await _discussionRepository.GetByIdAsync(id);
+                if (discussions == null)
+                {
+                    return new APIResponse<DiscussionRes>
+                    {
+                        StatusCode = StatusCodeRes.ResourceNotFound,
+                        Message = "No data",
+                        Data = null
+                    };
+                }
+                return new APIResponse<DiscussionRes>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = discussions
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<DiscussionRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null
                 };
             }
         }

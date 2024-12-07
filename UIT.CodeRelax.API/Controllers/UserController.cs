@@ -4,7 +4,9 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.User;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Responses.Submission;
 using UIT.CodeRelax.UseCases.DTOs.Responses.User;
+using UIT.CodeRelax.UseCases.Services.Impls;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers

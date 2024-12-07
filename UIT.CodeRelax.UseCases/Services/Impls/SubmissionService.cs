@@ -117,6 +117,78 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
+        public async Task<APIResponse<IEnumerable<GetSubmissionRes>>> GetByProblemAndUserID(GetSubmissionByProblemAndUserReq req)
+        {
+            try
+            {
+                var submission = await _submissionRepository.GetByProblemAndUserIDAsync(req);
+
+                return new APIResponse<IEnumerable<GetSubmissionRes>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = submission
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<GetSubmissionRes>>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<APIResponse<IEnumerable<GetSubmissionRes>>> GetByUserID(int id)
+        {
+            try
+            {
+                var submission = await _submissionRepository.GetByUserIDAsync(id);
+
+                return new APIResponse<IEnumerable<GetSubmissionRes>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = submission
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<GetSubmissionRes>>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<APIResponse<GetStatisticByUserRes>> GetStatisticByUserID(int id)
+        {
+            try
+            {
+                var metric = await _submissionRepository.GetStatisticByUserIDAsync(id);
+
+                return new APIResponse<GetStatisticByUserRes>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = metric
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<GetStatisticByUserRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
         public Task<APIResponse<bool>> Update(CreateSubmissionReq req)
         {
             throw new NotImplementedException();

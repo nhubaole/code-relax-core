@@ -88,9 +88,89 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             {
                 var submission = await _dbContext.Submissions
                                         .Include(s => s.Problem)
-                                        .Include(s => s.User)
+                                        //.Include(s => s.User)
                                         .FirstOrDefaultAsync(x => x.Id == id);
                 return _mapper.Map<GetSubmissionRes>(submission);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<GetSubmissionRes>> GetByProblemAndUserIDAsync(GetSubmissionByProblemAndUserReq req)
+        {
+            try
+            {
+                var submissions = await _dbContext.Submissions
+                                        .Include(s => s.Problem)
+                                        .Where(x => x.UserId == req.UserID && x.ProblemId == req.ProblemID)
+                                        .ToListAsync();
+                return _mapper.Map<IEnumerable<GetSubmissionRes>>(submissions);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<GetSubmissionRes>> GetByUserIDAsync(int id)
+        {
+            try
+            {
+                var submissions = await _dbContext.Submissions
+                                        .Include(s => s.Problem)
+                                        .Where(x => x.UserId == id)
+                                        .ToListAsync();
+                return _mapper.Map<IEnumerable<GetSubmissionRes>>(submissions);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<GetStatisticByUserRes> GetStatisticByUserIDAsync(int id)
+        {
+            try
+            {
+                var submissions = await _dbContext.Submissions
+                                        .Include(s => s.Problem)
+                                        .Where(x => x.UserId == id)
+                                        .ToListAsync();
+                int easyCount = 0;
+                int mediumCount = 0;
+                int hardCount = 0;
+                int acceptedCount = 0;
+                foreach (var submission in submissions)
+                {
+                    if (submission.Problem.Difficulty == 1)
+                    {
+                        easyCount++;
+                    }
+                    else if (submission.Problem.Difficulty == 2)
+                    {
+                        mediumCount++;
+                    }
+                    else
+                    {
+                        hardCount++;
+                    }
+
+                    if (submission.Status == 0)
+                    {
+                        acceptedCount++;
+                    }
+                }
+                var metric = new GetStatisticByUserRes
+                {
+                    EasyCount = easyCount,
+                    MediumCount = mediumCount,
+                    HardCount = hardCount,
+                    NumOfSubmissions = submissions.Count,
+                    AcceptanceRate = acceptedCount / submissions.Count
+                };
+                return metric;
             }
             catch (Exception ex)
             {

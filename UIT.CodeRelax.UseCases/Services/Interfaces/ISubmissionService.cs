@@ -13,7 +13,10 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
     {
 
         public Task<APIResponse<IEnumerable<GetSubmissionRes>>> GetAll();
+        public Task<APIResponse<IEnumerable<GetSubmissionRes>>> GetByUserID(int id);
+        public Task<APIResponse<IEnumerable<GetSubmissionRes>>> GetByProblemAndUserID(GetSubmissionByProblemAndUserReq req);
         public Task<APIResponse<GetSubmissionRes>> GetByID(int id);
+        public Task<APIResponse<GetStatisticByUserRes>> GetStatisticByUserID(int id);
         public Task<APIResponse<bool>> Create(CreateSubmissionReq req);
         public Task<APIResponse<bool>> Update(CreateSubmissionReq req);
         public Task<APIResponse<bool>> Delete(int id);
