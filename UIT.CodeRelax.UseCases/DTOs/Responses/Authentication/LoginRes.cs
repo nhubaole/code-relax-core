@@ -11,6 +11,15 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Authentication
     {
         public string Token { get; set; }
         public UserProfileRes UserProfile { get; set; }
+        public int ExpiresIn { get; set; }
+
+        public LoginRes() { }
+        public LoginRes(UserProfileRes userProfile, string token, int expiresIn)
+        {
+            this.UserProfile = userProfile;
+            this.Token = token;
+            ExpiresIn = expiresIn;
+        }
 
     }
 }

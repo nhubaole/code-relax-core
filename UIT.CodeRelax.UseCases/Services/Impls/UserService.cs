@@ -282,21 +282,35 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         public string GenerateJwtToken(UserProfileRes loginReq)
         {
             var claims = new[]
-            {
+           {
                 new Claim(ClaimTypes.Name, loginReq.DisplayName),
                 new Claim(ClaimTypes.Email, loginReq.Email),
             };
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
+            var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(_config["Jwt:Issuer"],
-              _config["Jwt:Issuer"],
-              null,
-              expires: DateTime.Now.AddMinutes(120),
-              signingCredentials: credentials);
+            var token = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Name, loginReq.DisplayName),
+                }),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = credentials,
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.CreateToken(token);
+
+
+            return new JwtSecurityTokenHandler().WriteToken(securityToken);
+
         }
     }
 }
