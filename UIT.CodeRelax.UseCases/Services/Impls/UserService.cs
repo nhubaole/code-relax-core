@@ -94,7 +94,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                var user = await userRepository.GetUserById(UserId);
+                var user = await userRepository.GetUserByIdAsync(UserId);
 
                 if (user != null)
                 {
@@ -151,7 +151,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Data = new LoginRes
                         {
                             Token = jwt,
-                            UserProfile = user
+                            ExpiresIn =(int)(DateTime.UtcNow.AddHours(1) - DateTime.UtcNow).TotalSeconds
                         }
                     };
                 }
@@ -180,7 +180,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                bool isExisted = (await userRepository.GetUserById(userProfileReq.Id)) != null;
+                bool isExisted = (await userRepository.GetUserByIdAsync(userProfileReq.Id)) != null;
 
                 if (isExisted)
                 {
@@ -281,10 +281,10 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
         public string GenerateJwtToken(UserProfileRes loginReq)
         {
-            var claims = new[]
-           {
-                new Claim(ClaimTypes.Name, loginReq.DisplayName),
-                new Claim(ClaimTypes.Email, loginReq.Email),
+            var claims = new Dictionary<string, object>
+            {
+                { JwtRegisteredClaimNames.Email, loginReq.Email },
+                { JwtRegisteredClaimNames.Name, loginReq.DisplayName }
             };
 
             var issuer = _config["Jwt:Issuer"];
@@ -294,23 +294,57 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
             var token = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.Name, loginReq.DisplayName),
-                }),
                 Issuer = issuer,
                 Audience = audience,
+                Claims = claims,
                 SigningCredentials = credentials,
-
-
+                Expires = DateTime.UtcNow.AddHours(1)
             };
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var securityToken = tokenHandler.CreateToken(token);
+            var securityToken = new JwtSecurityTokenHandler().CreateToken(token);
 
 
             return new JwtSecurityTokenHandler().WriteToken(securityToken);
 
+        }
+
+        public async Task<APIResponse<UserProfileRes>> GetCurrentUser(string email)
+        {
+            try
+            {
+                var user = await userRepository.GetUserByEmailAsync(email);
+
+                if (user != null)
+                {
+                    return new APIResponse<UserProfileRes>
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Message = "Success",
+                        Data = new UserProfileRes
+                        {
+                            Id = user.Id,
+                            DisplayName = user.DisplayName,
+                            Password = user.Password,
+                            Email = user.Email,
+                            Role = user.Role,
+                            CreatedAt = user.CreatedAt
+
+                        }
+                    };
+                }
+
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                };
+            }
+            catch (Exception ex) {
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : ex.Message,
+                };
+            }
         }
     }
 }

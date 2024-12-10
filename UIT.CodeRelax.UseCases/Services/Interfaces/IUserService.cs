@@ -17,6 +17,8 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
 
         Task<APIResponse<UserProfileRes>> UpdateUserProfile(UserProfileReq userProfileReq);
 
+        Task<APIResponse<UserProfileRes>> GetCurrentUser(string email);
+
         string GenerateJwtToken(UserProfileRes userProfile);
     }
 }

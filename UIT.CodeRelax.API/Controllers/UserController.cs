@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Requests.User;
@@ -10,6 +11,7 @@ using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class UserController : ControllerExtensions
@@ -20,34 +22,6 @@ namespace UIT.CodeRelax.API.Controllers
         {
             this.userService = userService;
         }
-
-        /// <summary>
-        /// Đăng ký tài khoản mới.
-        /// </summary>
-        /// <param name="signUpReq">Thông tin yêu cầu đăng ký</param>
-        /// <returns>Kết quả đăng ký tài khoản</returns>
-        [AllowAnonymous]
-        [HttpPost("Signup")]
-        public async Task<IActionResult> SignUp(SignUpReq signUpReq)
-        {
-            return ApiOK(await userService.SignUp(signUpReq));
-        }
-
-
-        /// <summary>
-        /// Đăng nhập tài khoản.
-        /// </summary>
-        /// <param name="loginReq">Thông tin đăng nhập</param>
-        /// <returns>Kết quả đăng nhập</returns>
-        [AllowAnonymous]
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(LoginReq loginReq)
-        {
-            var response = await userService.Login(loginReq);
-            return ApiOK(response);
-
-        }
-
 
         /// <summary>
         /// Lấy thông tin tài khoản bằng id
@@ -84,9 +58,24 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetAllUsers ()
         {
-
             var response = await userService.GetAllUser();
             return ApiOK(response);
         }
+
+        /// <summary>
+        /// Lấy người dùng hiện tại đã đăng nhập
+        /// </summary>
+        /// <returns>Thông tin người dùng.</returns>
+        [HttpGet("CurrentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (email == null) {
+                return Unauthorized("Can get current user. Please recheck token");
+            }
+            var response = await userService.GetCurrentUser(email);
+            return ApiOK(response);
+        }
+
     }
 }

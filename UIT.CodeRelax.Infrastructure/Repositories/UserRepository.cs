@@ -62,7 +62,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
-        public async Task<UserProfileRes> GetUserById(int UserId)
+        public async Task<UserProfileRes> GetUserByIdAsync(int UserId)
         {
             try
             {
@@ -80,11 +80,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     return userRes;
 
                 }
-                return null ;
-
-                //userRes.Google = "";
-                //userRes.Github = "";
-                //userRes.Facebook = "";
+                return null;
 
             }
             catch (Exception ex)
@@ -156,6 +152,32 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
             catch (Exception ex) {
                 return Enumerable.Empty<UserProfileRes>();
+            }
+        }
+
+        public async Task<UserProfileRes> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+                UserProfileRes userRes = new UserProfileRes();
+                if (user != null)
+                {
+                    userRes.Id = user.Id;
+                    userRes.DisplayName = user.DisplayName;
+                    userRes.Password = user.Password;
+                    userRes.Email = user.Email;
+                    userRes.Role = user.Role;
+                    userRes.CreatedAt = user.CreatedAt;
+
+                    return userRes;
+
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }
