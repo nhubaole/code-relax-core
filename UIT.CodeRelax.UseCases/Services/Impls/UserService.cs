@@ -1,6 +1,11 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -18,12 +23,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
-        //private readonly ILogger<UserService> logger;
+        private readonly IConfiguration _config;
+        private readonly ILogger<UserService> logger;
 
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IConfiguration configuration)
         {
             this.userRepository = userRepository;
+            this._config = configuration;
         }
 
         private string errorMessage = null;
@@ -33,45 +40,27 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
 
-                if (!IsValidEmail(signUpReq.Email))
-                {
-                    errorMessage = "Invalid email format.";
-                }
+                var signUpRes = await userRepository.AddUserAsync(signUpReq);
 
-                else if (!IsValidPassword(signUpReq.Password))
+                if (signUpRes != null)
                 {
-                    errorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one digit."; // Lưu thông điệp lỗi cho mật khẩu
-                }
-
-                if (IsValidEmail(signUpReq.Email) && IsValidPassword(signUpReq.Password))
-                {
-                    var signUpRes = await userRepository.AddUserAsync(signUpReq);
-
-                    if (signUpRes != null)
+                    return new APIResponse<SignUpRes>
                     {
-                        return new APIResponse<SignUpRes>
+                        StatusCode = StatusCodeRes.ReturnWithData,
+                        Message = "Success",
+                        Data = new SignUpRes
                         {
-                            StatusCode = StatusCodeRes.ReturnWithData,
-                            Message = "Success",
-                            Data = new SignUpRes
-                            {
-                                Success = true,
-                                DisplayName = signUpReq.DisplayName,
-                                Password = signUpReq.Password,
-                            }
-                        };
-                    }
-
+                            DisplayName = signUpReq.DisplayName,
+                            Password = signUpReq.Password,
+                        }
+                    };
                 }
 
                 return new APIResponse<SignUpRes>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new SignUpRes
-                    {
-                        Success = false
-                    }
+                    Data = null,
                 };
 
             }
@@ -81,10 +70,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new SignUpRes
-                    {
-                        Success = false
-                    }
+                    Data = null,
                 };
                 throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
             }
@@ -108,7 +94,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                var user = await userRepository.GetUserById(UserId);
+                var user = await userRepository.GetUserByIdAsync(UserId);
 
                 if (user != null)
                 {
@@ -118,7 +104,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Message = "Success",
                         Data = new UserProfileRes
                         {
-                            Success = true,
                             Id = UserId,
                             DisplayName = user.DisplayName,
                             Password = user.Password,
@@ -134,10 +119,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
 
             }
@@ -147,10 +128,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
                 throw new Exception("UserSerrvice: An error occurred while signing up.\n", ex);
             }
@@ -165,26 +142,24 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 if (user != null)
                 {
+                    string jwt = GenerateJwtToken(user);
+
                     return new APIResponse<LoginRes>
                     {
                         StatusCode = StatusCodeRes.Success,
                         Message = "Success",
                         Data = new LoginRes
                         {
-                            Success = true,
-                            UserProfile = user
+                            Token = jwt,
+                            ExpiresIn =(int)(DateTime.UtcNow.AddHours(1) - DateTime.UtcNow).TotalSeconds
                         }
                     };
                 }
 
                 return new APIResponse<LoginRes>
                 {
-                    StatusCode = StatusCodeRes.InternalError,
+                    StatusCode = StatusCodeRes.Deny,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new LoginRes
-                    {
-                        Success = false
-                    }
                 };
 
             }
@@ -194,10 +169,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new LoginRes
-                    {
-                        Success = false
-                    }
+
                 };
                 throw new Exception("UserSerrvice: An error occurred while  logging.\n", ex);
             }
@@ -208,7 +180,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             try
             {
-                bool isExisted = (await userRepository.GetUserById(userProfileReq.Id)) != null;
+                bool isExisted = (await userRepository.GetUserByIdAsync(userProfileReq.Id)) != null;
 
                 if (isExisted)
                 {
@@ -243,7 +215,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                                 Message = "Success",
                                 Data = new UserProfileRes
                                 {
-                                    Success = true,
                                     Id = UpdatedUser.Id,
                                     DisplayName = UpdatedUser.DisplayName,
                                     Password = UpdatedUser.Password,
@@ -267,10 +238,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
                 };
 
 
@@ -281,14 +248,103 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = new UserProfileRes
-                    {
-                        Success = false
-                    }
+
                 };
                 throw new Exception("UserSerrvice: An error occurred while updating.\n", ex);
             }
             finally { errorMessage = null; }
+        }
+
+        public async Task<APIResponse<IEnumerable<UserProfileRes>>> GetAllUser()
+        {
+            try
+            {
+                var rs = await userRepository.GetAllUsersAsync();
+
+                return new APIResponse<IEnumerable<UserProfileRes>>()
+                {
+                    StatusCode = StatusCodeRes.ReturnWithData,
+                    Message = "Success",
+                    Data = rs,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<UserProfileRes>>()
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null,
+                };
+            }
+        }
+
+        public string GenerateJwtToken(UserProfileRes loginReq)
+        {
+            var claims = new Dictionary<string, object>
+            {
+                { JwtRegisteredClaimNames.Email, loginReq.Email },
+                { JwtRegisteredClaimNames.Name, loginReq.DisplayName }
+            };
+
+            var issuer = _config["Jwt:Issuer"];
+            var audience = _config["Jwt:Audience"];
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:SecretKey"]));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new SecurityTokenDescriptor
+            {
+                Issuer = issuer,
+                Audience = audience,
+                Claims = claims,
+                SigningCredentials = credentials,
+                Expires = DateTime.UtcNow.AddHours(1)
+            };
+            var securityToken = new JwtSecurityTokenHandler().CreateToken(token);
+
+
+            return new JwtSecurityTokenHandler().WriteToken(securityToken);
+
+        }
+
+        public async Task<APIResponse<UserProfileRes>> GetCurrentUser(string email)
+        {
+            try
+            {
+                var user = await userRepository.GetUserByEmailAsync(email);
+
+                if (user != null)
+                {
+                    return new APIResponse<UserProfileRes>
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Message = "Success",
+                        Data = new UserProfileRes
+                        {
+                            Id = user.Id,
+                            DisplayName = user.DisplayName,
+                            Password = user.Password,
+                            Email = user.Email,
+                            Role = user.Role,
+                            CreatedAt = user.CreatedAt
+
+                        }
+                    };
+                }
+
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                };
+            }
+            catch (Exception ex) {
+                return new APIResponse<UserProfileRes>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : ex.Message,
+                };
+            }
         }
     }
 }

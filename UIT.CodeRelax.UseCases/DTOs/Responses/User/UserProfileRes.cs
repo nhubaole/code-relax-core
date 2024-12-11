@@ -8,7 +8,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.User
 {
     public class UserProfileRes
     {
-        public bool Success { get; set; }
         public int Id { get; set; }
 
         public string DisplayName { get; set; }
