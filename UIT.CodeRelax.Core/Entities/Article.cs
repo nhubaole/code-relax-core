@@ -33,7 +33,6 @@ namespace UIT.CodeRelax.Core.Entities
         public int UserId { get; set; }
         public User? User { get; set; }
 
-
         public int GetDaysSinceUpdated()
         {
             return (DateTime.Now - UpdatedAt).Days;

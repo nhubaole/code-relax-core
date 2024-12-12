@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
@@ -26,10 +27,17 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
         }
 
-        public async Task<APIResponse<Article>> AddArticleAsync(Article article)
+        public async Task<APIResponse<Article>> AddArticleAsync(ArticleInfoReq articleInfor)
         {
            try
             {
+                Article article = new Article();
+                article.Id = articleInfor.Id;
+                article.Title = articleInfor.Title;
+                article.Content = articleInfor.Content;
+                article.UpdatedAt = DateTime.UtcNow;
+                article.UserId = articleInfor.UserId;
+                
                 var response = await _articleRepository.AddArticleAsync(article);
                 if(response != null)
                 {
@@ -142,10 +150,17 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public async Task<APIResponse<Article>> UpdateArticleAsync(Article article)
+        public async Task<APIResponse<Article>> UpdateArticleAsync(ArticleInfoReq articleInfor)
         {
             try
             {
+                Article article = new Article();
+                article.Id = articleInfor.Id;
+                article.Title = articleInfor.Title;
+                article.Content = articleInfor.Content;
+                article.UpdatedAt = DateTime.UtcNow;
+                article.UserId = articleInfor.UserId; 
+
                 var response = await _articleRepository.UpdateArticleAsync(article);
                 return new APIResponse<Article>()
                 {

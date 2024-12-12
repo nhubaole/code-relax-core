@@ -23,13 +23,11 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         public async Task<IEnumerable<Article>> GetAllArticlesAsync()
         {
             return await _dbContext.Articles
-                                  .Include(a => a.User)
                                   .ToListAsync();
         }
         public async Task<Article> GetArticleByIdAsync(int id)
         {
             var article = await _dbContext.Articles
-                                  .Include(a => a.User)
                                   .FirstOrDefaultAsync(a => a.Id == id);
 
             if (article == null)
@@ -47,7 +45,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
         public async Task<Article> UpdateArticleAsync(Article article)
         {
-            await _dbContext.Articles.AddAsync(article);
+            _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
             return article;
         }

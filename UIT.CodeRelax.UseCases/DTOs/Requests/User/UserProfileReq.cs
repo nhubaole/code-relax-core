@@ -8,7 +8,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.User
 {
     public class UserProfileReq
     {
-        //TODDO: check
         public int Id { get; set; }
         public string DisplayName { get; set; }
 

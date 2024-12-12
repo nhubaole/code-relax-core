@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.Core.Entities;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers
@@ -56,10 +57,9 @@ namespace UIT.CodeRelax.API.Controllers
         /// </summary>
         /// <returns>Articlc vừa tạo</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateArticle([FromBody]Article article)
+        public async Task<IActionResult> CreateArticle([FromBody]ArticleInfoReq article)
         {
-            await articleService.AddArticleAsync(article);
-            return ApiOK (await articleService.GetArticleByIdAsync(article.Id));
+            return ApiOK (await articleService.AddArticleAsync(article));
         }
 
 
@@ -69,9 +69,9 @@ namespace UIT.CodeRelax.API.Controllers
         ///  <param name="ArticleId">Id article</param>
         /// <returns>Articlc vừa update</returns>
         [HttpPut("{ArticleId}")]
-        public async Task<IActionResult> UpdateArticle(int id, [FromBody] Article article)
+        public async Task<IActionResult> UpdateArticle(int ArticleId, [FromBody] ArticleInfoReq article)
         {
-            if (id != article.Id)
+            if (ArticleId != article.Id)
             {
                 return BadRequest();
             }
@@ -85,9 +85,9 @@ namespace UIT.CodeRelax.API.Controllers
         /// <param name="ArticleId"></param>
         /// <returns></returns>
         [HttpDelete("{ArticleId}")]
-        public async Task<IActionResult> DeleteArticle (int id)
+        public async Task<IActionResult> DeleteArticle (int ArticleId)
         {
-            return ApiOK(await articleService.DeleteArticleAsync(id));
+            return ApiOK(await articleService.DeleteArticleAsync(ArticleId));
         }
         
     }
