@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Submission;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Submission;
@@ -9,6 +10,8 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class SubmissionsController : ControllerExtensions
     {
         private readonly ISubmissionService _submissionService;
