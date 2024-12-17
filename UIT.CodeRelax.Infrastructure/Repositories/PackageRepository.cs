@@ -16,6 +16,25 @@ namespace UIT.CodeRelax.UseCases.Repositories
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mapper = mapper;
         }
+
+        public async Task AddProblemToPackage(int packageId, Problem problem)
+        {
+            var package = await GetByIDAsync(packageId);
+            if (package == null) {
+                throw new InvalidOperationException($"Package with ID {packageId} does not exist.");
+            }
+
+            var problemPackage = new ProblemPackage
+            {
+                PackageId = packageId,
+                Problem = problem
+            };
+
+            package.ProblemPackages.Add(problemPackage);
+
+            await _dbContext.SaveChangesAsync();
+        }
+
         public async Task<Package> CreateNewPackage(Package package)
         {
             try
@@ -40,6 +59,16 @@ namespace UIT.CodeRelax.UseCases.Repositories
             catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        public async Task DeletePackageAsync(Package package)
+        {
+            var existedPackage = await GetByIDAsync(package.Id);
+            if (existedPackage != null)
+            {
+                _dbContext.Set<Package>().Remove(package);
+                await _dbContext.SaveChangesAsync();
             }
         }
 
@@ -69,18 +98,44 @@ namespace UIT.CodeRelax.UseCases.Repositories
             }
         }
 
-        public async Task<List<ProblemPackage>> LoadProblemPackagesAsync(Package package)
+        public async Task<Package> UpdatePackageAsync(Package package)
         {
             try
             {
-                if (package != null && package.ProblemPackages.Count == 0)
+                package.UpdatedAt = DateTime.UtcNow;
+
+                var savedPackage = await _dbContext.Packages.FirstOrDefaultAsync(p => p.Id == package.Id);
+                if (savedPackage != null)
                 {
-                    return await _dbContext.ProblemPackages.
-                        Include(p => p.PackageId == package.Id)
-                        .ToListAsync();
+
+                    _dbContext.Packages.Update(package);
+                    await _dbContext.SaveChangesAsync();
+
+                    return savedPackage;
                 }
-                return null;
-            } catch (Exception ex) { throw;  }
+                else
+                {
+                    throw new Exception("\"Package was not saved successfully.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        async Task<IEnumerable<Problem>> IPackageRepository.LoadProblemsOfPackageAsync(int packageId)
+        {
+            try
+            {
+                return await _dbContext.Packages
+                   .Where(p => p.Id == packageId)
+                   .SelectMany(p => p.ProblemPackages)
+                   .Select(pp => pp.Problem)
+                   .ToListAsync();
+            }
+            catch (Exception ex) { throw; }
         }
     }
 }

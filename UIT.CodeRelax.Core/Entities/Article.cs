@@ -37,6 +37,5 @@ namespace UIT.CodeRelax.Core.Entities
         {
             return (DateTime.Now - UpdatedAt).Days;
         }
-
     }
 }

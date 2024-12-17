@@ -11,9 +11,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Package
     public class NewPackageReq
     {
         public string Type { get; set; }
-        public string Content { get; set; }
-
-        
+        public string Content { get; set; }   
     }
 
     public class NewPackageReqValidator : AbstractValidator<NewPackageReq>
