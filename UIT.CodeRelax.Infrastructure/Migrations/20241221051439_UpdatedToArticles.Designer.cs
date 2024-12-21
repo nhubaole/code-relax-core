@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UIT.CodeRelax.Infrastructure.DataAccess;
@@ -11,9 +12,11 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 namespace UIT.CodeRelax.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221051439_UpdatedToArticles")]
+    partial class UpdatedToArticles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,68 +233,6 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("problem_tags");
-                });
-
-            modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Quiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Article_id")
-                        .HasColumnType("integer")
-                        .HasColumnName("article_id");
-
-                    b.Property<string>("CorrectOption")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("correct_option");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Explanation")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("explanation");
-
-                    b.Property<string>("OptionA")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("option_a");
-
-                    b.Property<string>("OptionB")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("option_b");
-
-                    b.Property<string>("OptionC")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("option_c");
-
-                    b.Property<string>("OptionD")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("option_d");
-
-                    b.Property<string>("QuestionText")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("question_text");
-
-                    b.Property<int?>("articleId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("articleId");
-
-                    b.ToTable("quizzes");
                 });
 
             modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Rating", b =>
@@ -535,15 +476,6 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                     b.Navigation("Problem");
 
                     b.Navigation("Tag");
-                });
-
-            modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Quiz", b =>
-                {
-                    b.HasOne("UIT.CodeRelax.Core.Entities.Article", "article")
-                        .WithMany()
-                        .HasForeignKey("articleId");
-
-                    b.Navigation("article");
                 });
 
             modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Rating", b =>

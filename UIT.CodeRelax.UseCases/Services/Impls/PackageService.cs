@@ -150,5 +150,42 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 erroMesssage = string.Empty;
             }
         }
+
+        public async Task<APIResponse<IEnumerable<Problem>>> GetProblemsOfPackage(int packageId)
+        {
+            try
+            {
+                var problems = await _packageRepository.LoadProblemsOfPackageAsync(packageId);
+                //TODO : recheck map dto
+                return new APIResponse<IEnumerable<Problem>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Data = problems
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<Problem>>
+                {
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Message = $"Can't get problems of package {packageId}",
+                };
+            }
+        }
+
+        public Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<APIResponse<string>> DeletePackage(int packgeId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<APIResponse<IEnumerable<Problem>>> AddProblemToPakage(int packageId, Problem problem)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

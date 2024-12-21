@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 
 namespace UIT.CodeRelax.Core.Entities
 {
@@ -19,14 +16,23 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("title")]
         public string Title { get; set; }
 
+        [Column("summary")]
+        public string Summary { get; set; }
+
+        [Column("subtitle")]
+        public string SubTitle { get; set; }
+
+        [Column("cover")]
+        public string Cover { get; set; }
+
         [Column("content")]
         public string Content { get; set; }
 
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-        [Column("like_count")]
-        public int LikeCount { get; set; } = 0;
 
         [ForeignKey("User")]
         [Column("user_id")]
@@ -36,6 +42,18 @@ namespace UIT.CodeRelax.Core.Entities
         public int GetDaysSinceUpdated()
         {
             return (DateTime.Now - UpdatedAt).Days;
+        }
+
+        //json -> object
+        public T GetJsonData<T>(string jsonData)
+        {
+            return JsonSerializer.Deserialize<T>(jsonData);
+        }
+
+        //object -> json
+        public string ConvertToJson(object data)
+        {
+            return JsonSerializer.Serialize(data);
         }
     }
 }

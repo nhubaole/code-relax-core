@@ -22,6 +22,7 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
         public DbSet<Submission> Submissions { get; set; }
         public DbSet<SubmissionResult> SubmissionResults { get; set; }
         public DbSet<Article> Articles { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
