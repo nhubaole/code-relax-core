@@ -49,6 +49,7 @@ builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 
+
 builder.Services.AddAutoMapper(typeof(AppProfile));
 
 //config JWT, check Jwt

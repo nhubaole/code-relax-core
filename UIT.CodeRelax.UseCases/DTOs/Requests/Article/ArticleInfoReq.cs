@@ -14,10 +14,12 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public string Summary { get; set; }
+        public string SubTitle { get; set; }
+        public string Cover { get; set; }
         public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-        public int LikeCount { get; set; } = 0;
         public int UserId { get; set; }
     }
     public class ArticleInforvalidator : AbstractValidator<ArticleInfoReq>

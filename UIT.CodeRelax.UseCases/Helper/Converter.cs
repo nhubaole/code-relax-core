@@ -171,5 +171,17 @@ namespace UIT.CodeRelax.UseCases.Helper
             return string.Join("\n", paramList); // Trả về chuỗi chứa các biến khởi tạo
         }
 
+        //json -> object
+        public static T GetJsonData<T>(string jsonData)
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<T>(jsonData);
+        }
+
+        //object -> json
+        public static string ConvertToJson(object data)
+        {
+            return System.Text.Json.JsonSerializer.Serialize(data);
+        }
+
     }
 }

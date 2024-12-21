@@ -43,17 +43,5 @@ namespace UIT.CodeRelax.Core.Entities
         {
             return (DateTime.Now - UpdatedAt).Days;
         }
-
-        //json -> object
-        public T GetJsonData<T>(string jsonData)
-        {
-            return JsonSerializer.Deserialize<T>(jsonData);
-        }
-
-        //object -> json
-        public string ConvertToJson(object data)
-        {
-            return JsonSerializer.Serialize(data);
-        }
     }
 }

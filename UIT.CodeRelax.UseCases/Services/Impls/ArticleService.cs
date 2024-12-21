@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
+using UIT.CodeRelax.UseCases.Helper;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
@@ -18,7 +19,8 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         private readonly IArticleRepository _articleRepository;
         private readonly IConfiguration _config;
         private readonly ILogger<ArticleService> logger;
-        
+
+
         public ArticleService(IArticleRepository articleRepository, IConfiguration _config, ILogger<ArticleService> logger)
         {
             this._articleRepository = articleRepository;
@@ -34,10 +36,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Article article = new Article();
                 article.Id = articleInfor.Id;
                 article.Title = articleInfor.Title;
+                article.Summary = articleInfor.Summary;
+                article.SubTitle = articleInfor.SubTitle;
+                article.Cover = articleInfor.Cover;
                 article.Content = articleInfor.Content;
+                article.CreatedAt = DateTime.UtcNow;
                 article.UpdatedAt = DateTime.UtcNow;
                 article.UserId = articleInfor.UserId;
-                
+
                 var response = await _articleRepository.AddArticleAsync(article);
                 if(response != null)
                 {
@@ -157,7 +163,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Article article = new Article();
                 article.Id = articleInfor.Id;
                 article.Title = articleInfor.Title;
+                article.Summary = articleInfor.Summary;
+                article.SubTitle = articleInfor.SubTitle;
+                article.Cover = articleInfor.Cover;
                 article.Content = articleInfor.Content;
+                article.CreatedAt = articleInfor.CreatedAt;
                 article.UpdatedAt = DateTime.UtcNow;
                 article.UserId = articleInfor.UserId; 
 
