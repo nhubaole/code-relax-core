@@ -124,25 +124,15 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
             try
             {
-                var existed = await GetQuizByIdAsync(id);
-                if (existed != null)
-                {
-                    Quiz model = MapToQuiz(Quiz);
-                    var response = await quizRepository.UpdateQuizAsync(model);
-
-                    return new APIResponse<Quiz>
-                    {
-                        StatusCode = StatusCodeRes.Success,
-                        Data = response,
-                    };
-                }
-
+                var model = MapToQuiz(Quiz);
+                var response = await quizRepository.UpdateQuizAsync(model);
 
                 return new APIResponse<Quiz>
                 {
-                    Message = "Can't update from service",
-                    StatusCode = StatusCodeRes.InternalError,
+                    StatusCode = StatusCodeRes.Success,
+                    Data = response,
                 };
+
             }
             catch (Exception ex)
             {
@@ -154,7 +144,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public static QuizInforReq MapToReq(Quiz quiz)
+        public QuizInforReq MapToReq(Quiz quiz)
         {
             return new QuizInforReq
             {
@@ -171,7 +161,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             };
         }
 
-        public static Quiz MapToQuiz(QuizInforReq quizReq)
+        public Quiz MapToQuiz(QuizInforReq quizReq)
         {
             return new Quiz
             {

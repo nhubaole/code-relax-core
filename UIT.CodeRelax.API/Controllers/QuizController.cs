@@ -65,16 +65,6 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateQuiz(int id, [FromBody] QuizInforReq quizReq)
         {
-            if (id != quizReq.Id)
-            {
-                return BadRequest("Quiz ID mismatch.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var result = await _quizService.UpdateQuizAsync(id, quizReq);
             return ApiOK(result);
         }

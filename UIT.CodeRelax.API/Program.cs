@@ -49,6 +49,9 @@ builder.Services.AddScoped<IPackageService, PackageService>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IArticleService, ArticleService>();
 
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+
 
 builder.Services.AddAutoMapper(typeof(AppProfile));
 

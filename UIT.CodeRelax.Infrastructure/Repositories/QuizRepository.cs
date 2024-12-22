@@ -60,12 +60,20 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
         public async Task<Quiz> UpdateQuizAsync(Quiz Quiz)
         {
-            var res = GetQuizByIdAsync(Quiz.Id);
-            if (res != null)
+            var existingQuiz = await GetQuizByIdAsync(Quiz.Id);
+            if (existingQuiz != null)
             {
-                _dbContext.Quizzes.Update(Quiz);
+                existingQuiz.QuestionText = Quiz.QuestionText;
+                existingQuiz.OptionA = Quiz.OptionA;
+                existingQuiz.OptionB = Quiz.OptionB;
+                existingQuiz.OptionC = Quiz.OptionC;
+                existingQuiz.OptionD = Quiz.OptionD;
+                existingQuiz.CorrectOption = Quiz.CorrectOption;
+                existingQuiz.Explanation = Quiz.Explanation;
+                existingQuiz.Article_id = Quiz.Article_id;
+                //_dbContext.Quizzes.Update(existingQuiz);
                 await _dbContext.SaveChangesAsync();
-                return Quiz;
+                return existingQuiz;
             }
             else { throw new Exception($"Quiz with id {Quiz.Id} does not exist"); };
         }
