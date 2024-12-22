@@ -51,7 +51,11 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             //article.Content = Converter.ConvertToJson(article.Content);
             //article.SubTitle = Converter.ConvertToJson(article.SubTitle);
-
+            var res = await GetArticleByIdAsync(article.Id);
+            if (res == null)
+            {
+                throw new Exception($"Article with id {article.Id} does not exist");
+            }
             _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
             return article;
@@ -63,6 +67,10 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             {
                 _dbContext.Articles.Remove(article);
                 await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception($"Article with id {id} does not exist");
             }
         }
 
