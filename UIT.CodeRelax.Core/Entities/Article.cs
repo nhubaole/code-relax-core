@@ -20,13 +20,13 @@ namespace UIT.CodeRelax.Core.Entities
         public string Summary { get; set; }
 
         [Column("subtitle")]
-        public string SubTitle { get; set; }
+        public JsonDocument SubTitle { get; set; }
 
         [Column("cover")]
         public string Cover { get; set; }
 
         [Column("content")]
-        public string Content { get; set; }
+        public JsonDocument Content { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

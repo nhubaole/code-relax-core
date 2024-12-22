@@ -41,16 +41,16 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
         public async Task<Article> AddArticleAsync(Article article)
         {
-            article.Content = Converter.ConvertToJson(article.Content);
-            article.SubTitle = Converter.ConvertToJson(article.SubTitle);
+            //article.Content = Converter.ConvertToJson(article.Content);
+            //article.SubTitle = Converter.ConvertToJson(article.SubTitle);
             await _dbContext.Articles.AddAsync(article);  
             await _dbContext.SaveChangesAsync();
             return article;
         }
         public async Task<Article> UpdateArticleAsync(Article article)
         {
-            article.Content = Converter.ConvertToJson(article.Content);
-            article.SubTitle = Converter.ConvertToJson(article.SubTitle);
+            //article.Content = Converter.ConvertToJson(article.Content);
+            //article.SubTitle = Converter.ConvertToJson(article.SubTitle);
 
             _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();

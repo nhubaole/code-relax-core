@@ -15,10 +15,10 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
         public int Id { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
-        public string SubTitle { get; set; }
+        public object SubTitle { get; set; }
         public string Cover { get; set; }
-        public string Content { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public object Content { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         public int UserId { get; set; }
     }
