@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Quiz;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
@@ -25,11 +26,12 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             this.logger = logger;
         }
 
-        public async Task<APIResponse<Quiz>> AddQuizAsync(Quiz Quiz)
+        public async Task<APIResponse<Quiz>> AddQuizAsync(QuizInforReq Quiz)
         {
            try
             {
-                var response = await quizRepository.AddQuizAsync(Quiz);
+                Quiz model = MapToQuiz(Quiz);
+                var response = await quizRepository.AddQuizAsync(model);
 
                 return new APIResponse<Quiz>
                 {
@@ -117,17 +119,29 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         }
 
 
-        public async Task<APIResponse<Quiz>> UpdateQuizAsync(Quiz Quiz)
+        public async Task<APIResponse<Quiz>> UpdateQuizAsync(int id, QuizInforReq Quiz)
         {
 
             try
             {
-                var response = await quizRepository.UpdateQuizAsync(Quiz);
+                var existed = await GetQuizByIdAsync(id);
+                if (existed != null)
+                {
+                    Quiz model = MapToQuiz(Quiz);
+                    var response = await quizRepository.UpdateQuizAsync(model);
+
+                    return new APIResponse<Quiz>
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Data = response,
+                    };
+                }
+
 
                 return new APIResponse<Quiz>
                 {
-                    StatusCode = StatusCodeRes.Success,
-                    Data = response,
+                    Message = "Can't update from service",
+                    StatusCode = StatusCodeRes.InternalError,
                 };
             }
             catch (Exception ex)
@@ -138,6 +152,40 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     StatusCode = StatusCodeRes.InternalError,
                 };
             }
+        }
+
+        public static QuizInforReq MapToReq(Quiz quiz)
+        {
+            return new QuizInforReq
+            {
+                Id = quiz.Id,
+                QuestionText = quiz.QuestionText,
+                OptionA = quiz.OptionA,
+                OptionB = quiz.OptionB,
+                OptionC = quiz.OptionC,
+                OptionD = quiz.OptionD,
+                CorrectOption = quiz.CorrectOption,
+                Explanation = quiz.Explanation,
+                CreatedAt = quiz.CreatedAt,
+                Article_id = quiz.Article_id
+            };
+        }
+
+        public static Quiz MapToQuiz(QuizInforReq quizReq)
+        {
+            return new Quiz
+            {
+                Id = quizReq.Id,
+                QuestionText = quizReq.QuestionText,
+                OptionA = quizReq.OptionA,
+                OptionB = quizReq.OptionB,
+                OptionC = quizReq.OptionC,
+                OptionD = quizReq.OptionD,
+                CorrectOption = quizReq.CorrectOption,
+                Explanation = quizReq.Explanation,
+                CreatedAt = quizReq.CreatedAt,
+                Article_id = quizReq.Article_id
+            };
         }
     }
 }

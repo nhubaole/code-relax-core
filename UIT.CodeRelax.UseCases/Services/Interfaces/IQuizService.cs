@@ -7,6 +7,7 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Articles;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.Core.Entities;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Quiz;
 
 namespace UIT.CodeRelax.UseCases.Services.Interfaces
 {
@@ -14,8 +15,8 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
     {
         Task<APIResponse<IEnumerable<Quiz>>> GetAllQuizsAsync();
         Task<APIResponse<Quiz>> GetQuizByIdAsync(int id);
-        Task<APIResponse<Quiz>> AddQuizAsync(Quiz Quiz);
-        Task<APIResponse<Quiz>> UpdateQuizAsync(Quiz Quiz);
+        Task<APIResponse<Quiz>> AddQuizAsync(QuizInforReq Quiz);
+        Task<APIResponse<Quiz>> UpdateQuizAsync(int id, QuizInforReq Quiz);
         Task<APIResponse<Quiz>> DeleteQuizAsync(int id);
     }
 }
