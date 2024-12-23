@@ -91,6 +91,23 @@ namespace UIT.CodeRelax.API.Controllers
         {
             return ApiOK(await articleService.DeleteArticleAsync(ArticleId));
         }
-        
+
+        /// <summary>
+        /// Lấy thông tin article bằng id
+        /// </summary>
+        /// <param name="ArticleId">Id article</param>
+        /// <returns>Thông tin article</returns>
+        [HttpGet("{ArticleId}/with-quizzes")]
+        public async Task<IActionResult> GetArticleAndQuizzesById(int ArticleId)
+        {
+            var article = await articleService.GetArticleAndQuizzesByIdAsync(ArticleId);
+
+            if (article != null)
+            {
+                return ApiOK(article);
+            }
+            return NoContent();
+        }
+
     }
 }

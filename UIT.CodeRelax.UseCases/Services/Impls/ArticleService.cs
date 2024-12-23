@@ -231,5 +231,29 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 UserId = dto.UserId
             };
         }
+
+        public async Task<APIResponse<ArticleInforRes>> GetArticleAndQuizzesByIdAsync(int id)
+        {
+            //TODO  : Check this func
+            try
+            {
+                var response = await _articleRepository.GetArticleByIdWithQuizzesAsync(id);
+                var res = MapToArticleResponse(response);
+                res.Quizzes = response.quizzes;
+                return new APIResponse<ArticleInforRes>()
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Data = res,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<ArticleInforRes>()
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,   
+                };
+            }
+        }
     }
 }

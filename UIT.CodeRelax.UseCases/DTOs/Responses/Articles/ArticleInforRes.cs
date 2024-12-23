@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using UIT.CodeRelax.Core.Entities;
 
 namespace UIT.CodeRelax.UseCases.DTOs.Responses.Articles
 {
@@ -17,5 +18,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Articles
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int UserId { get; set; }
+        public ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
     }
 }

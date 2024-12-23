@@ -79,5 +79,19 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             return await _dbContext.Articles.Where(a => a.UserId == userId)
                                  .ToListAsync();
         }
+
+        public async Task<Article> GetArticleByIdWithQuizzesAsync(int id)
+        {
+            var article = await _dbContext.Articles
+        .Include(a => a.quizzes)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (article == null)
+            {
+                throw new Exception($"Article with ID {id} not found.");
+            }
+
+            return article;
+        }
     }
 }
