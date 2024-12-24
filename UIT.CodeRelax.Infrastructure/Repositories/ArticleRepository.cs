@@ -10,6 +10,7 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.Helper;
 using UIT.CodeRelax.UseCases.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UIT.CodeRelax.Infrastructure.Repositories
 {
@@ -49,13 +50,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
         public async Task<Article> UpdateArticleAsync(Article article)
         {
-            //article.Content = Converter.ConvertToJson(article.Content);
-            //article.SubTitle = Converter.ConvertToJson(article.SubTitle);
-            var res = await GetArticleByIdAsync(article.Id);
-            if (res == null)
-            {
-                throw new Exception($"Article with id {article.Id} does not exist");
-            }
             _dbContext.Articles.Update(article);
             await _dbContext.SaveChangesAsync();
             return article;
@@ -82,15 +76,17 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
         public async Task<Article> GetArticleByIdWithQuizzesAsync(int id)
         {
-            var article = await _dbContext.Articles
+            var queery = _dbContext.Articles
         .Include(a => a.quizzes)
-        .FirstOrDefaultAsync(a => a.Id == id);
+        .Where(a => a.Id == id);
+            Console.WriteLine(queery.ToQueryString());
+            var article = await queery.FirstOrDefaultAsync();
+
 
             if (article == null)
             {
                 throw new Exception($"Article with ID {id} not found.");
             }
-
             return article;
         }
     }

@@ -43,8 +43,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.UpdatedAt = savedPackage.UpdatedAt;
                     res.UpdateUpdatedAgo();
 
-
-
                     return new APIResponse<PackageDasboardRes>
                     {
                         StatusCode = StatusCodeRes.Success,

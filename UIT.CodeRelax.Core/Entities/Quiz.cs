@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,6 +44,5 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("article_id")]
         public int Article_id { get; set; }
         public Article? article { get; set; }
-
     }
 }
