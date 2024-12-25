@@ -34,11 +34,6 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [ForeignKey("User")]
-        [Column("user_id")]
-        public int UserId { get; set; }
-        public User? User { get; set; }
-
         public ICollection<Quiz> quizzes { get; set; } = new List<Quiz>();
 
         public int GetDaysSinceUpdated()

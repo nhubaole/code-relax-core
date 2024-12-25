@@ -25,7 +25,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns>Thông tin article</returns>
         [HttpGet("{ArticleId}")]
         public async Task<IActionResult> GetArticleById(int ArticleId) {
-            var article = await articleService.GetArticleByIdAsync(ArticleId);
+            var article = await articleService.GetArticleAndQuizzesByIdAsync(ArticleId);
 
             if (article != null)
             {
@@ -33,6 +33,23 @@ namespace UIT.CodeRelax.API.Controllers
             }
             return NoContent();
         }
+
+        ///// <summary>
+        ///// Lấy thông tin article bằng id
+        ///// </summary>
+        ///// <param name="ArticleId">Id article</param>
+        ///// <returns>Thông tin article</returns>
+        //[HttpGet("{ArticleId}/with-quizzes")]
+        //public async Task<IActionResult> GetArticleAndQuizzesById(int ArticleId)
+        //{
+        //    var article = await articleService.GetArticleAndQuizzesByIdAsync(ArticleId);
+
+        //    if (article != null)
+        //    {
+        //        return ApiOK(article);
+        //    }
+        //    return NoContent();
+        //}
 
 
         /// <summary>
@@ -42,17 +59,6 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllArticles() {
             return ApiOK(await articleService.GetAllArticlesAsync());
-        }
-
-        /// <summary>
-        /// Lấy danh sách article của người dùng
-        /// </summary>
-        /// <param name="UserId">Id người dùng</param>
-        /// <returns>Danh sách articles của người đó</returns>
-        [HttpGet("article/{UserId}")]
-        public async Task<IActionResult> GetArticlesByUSerId(int UserId)
-        {
-            return ApiOK(await articleService.GetArticleByUserId(UserId));
         }
 
         /// <summary>
@@ -91,24 +97,7 @@ namespace UIT.CodeRelax.API.Controllers
         public async Task<IActionResult> DeleteArticle (int ArticleId)
         {
             return ApiOK(await articleService.DeleteArticleAsync(ArticleId));
-        }
-
-        /// <summary>
-        /// Lấy thông tin article bằng id
-        /// </summary>
-        /// <param name="ArticleId">Id article</param>
-        /// <returns>Thông tin article</returns>
-        [HttpGet("{ArticleId}/with-quizzes")]
-        public async Task<IActionResult> GetArticleAndQuizzesById(int ArticleId)
-        {
-            var article = await articleService.GetArticleAndQuizzesByIdAsync(ArticleId);
-
-            if (article != null)
-            {
-                return ApiOK(article);
-            }
-            return NoContent();
-        }
+        }  
 
     }
 }

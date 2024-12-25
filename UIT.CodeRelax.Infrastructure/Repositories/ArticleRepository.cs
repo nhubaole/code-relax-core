@@ -67,13 +67,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 throw new Exception($"Article with id {id} does not exist");
             }
         }
-
-        public async Task<IEnumerable<Article>> GetArticleByUserIdAsync(int userId)
-        {
-            return await _dbContext.Articles.Where(a => a.UserId == userId)
-                                 .ToListAsync();
-        }
-
         public async Task<Article> GetArticleByIdWithQuizzesAsync(int id)
         {
             var queery = _dbContext.Articles
@@ -81,7 +74,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         .Where(a => a.Id == id);
             Console.WriteLine(queery.ToQueryString());
             var article = await queery.FirstOrDefaultAsync();
-
 
             if (article == null)
             {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Articles;
+using UIT.CodeRelax.UseCases.DTOs.Responses.Quiz;
 using UIT.CodeRelax.UseCases.Helper;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
@@ -138,44 +140,10 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
-
-        public async Task<APIResponse<IEnumerable<ArticleInforRes>>> GetArticleByUserId(int userId)
-        {
-            try
-            {
-                var response = await _articleRepository.GetArticleByUserIdAsync(userId);
-                var result = response.Select(article => MapToArticleResponse(article));
-
-                return new APIResponse<IEnumerable<ArticleInforRes>>()
-                {
-                    StatusCode = StatusCodeRes.Success,
-                    Data = result
-                };
-            }
-            catch (Exception ex)
-            {
-                return new APIResponse<IEnumerable<ArticleInforRes>>()
-                {
-                    StatusCode = StatusCodeRes.InternalError,
-                    Message = ex.Message,
-                };
-            }
-        }
-
         public async Task<APIResponse<ArticleInforRes>> UpdateArticleAsync(ArticleInfoReq articleInfor)
         {
             try
             {
-                //Article article = new Article();
-                //article.Id = articleInfor.Id;
-                //article.Title = articleInfor.Title;
-                //article.Summary = articleInfor.Summary;
-                //article.SubTitle = articleInfor.SubTitle;
-                //article.Cover = articleInfor.Cover;
-                //article.Content = articleInfor.Content;
-                //article.CreatedAt = articleInfor.CreatedAt;
-                //article.UpdatedAt = DateTime.UtcNow;
-                //article.UserId = articleInfor.UserId; 
                 Article article = new Article();
                 article = MapToArticle(articleInfor);
 
@@ -199,17 +167,34 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
         public ArticleInforRes MapToArticleResponse(Article article)
         {
-            return new ArticleInforRes
+            ArticleInforRes res = new ArticleInforRes
             {
                 Id = article.Id,
                 Title = article.Title,
                 Summary = article.Summary,
                 SubTitle = article.SubTitle,
-                Content = article.Content, 
+                Content = article.Content,
                 CreatedAt = article.CreatedAt,
                 UpdatedAt = article.UpdatedAt,
-                UserId = article.UserId
             };
+            foreach (Quiz quiz in article.quizzes)
+            {
+                QuizInforRes quizInfor = new QuizInforRes
+                {
+                    Id = quiz.Id,
+                    QuestionText = quiz.QuestionText,
+                    OptionA = quiz.OptionA,
+                    OptionB = quiz.OptionB,
+                    OptionC = quiz.OptionC,
+                    OptionD = quiz.OptionD,
+                    CorrectOption = quiz.CorrectOption,
+                    Explanation = quiz.Explanation,
+                    CreatedAt = quiz.CreatedAt,
+                    ArticleId = quiz.ArticleId
+                };
+                res.Quizzes.Add(quizInfor);
+            }
+            return res;
         }
 
         public Article MapToArticle(ArticleInfoReq dto)
@@ -228,22 +213,27 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     : null, 
                 CreatedAt = dto.CreatedAt,
                 UpdatedAt = dto.UpdatedAt,
-                UserId = dto.UserId
             };
         }
 
         public async Task<APIResponse<ArticleInforRes>> GetArticleAndQuizzesByIdAsync(int id)
         {
-            //TODO  : Check this func
             try
             {
                 var response = await _articleRepository.GetArticleByIdWithQuizzesAsync(id);
-                var res = MapToArticleResponse(response);
-                res.Quizzes = response.quizzes;
+                if(response != null)
+                {
+                    var res = MapToArticleResponse(response);
+                    return new APIResponse<ArticleInforRes>()
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Data = res,
+                    };
+                }
                 return new APIResponse<ArticleInforRes>()
                 {
-                    StatusCode = StatusCodeRes.Success,
-                    Data = res,
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message ="Can not find the article",
                 };
             }
             catch (Exception ex)

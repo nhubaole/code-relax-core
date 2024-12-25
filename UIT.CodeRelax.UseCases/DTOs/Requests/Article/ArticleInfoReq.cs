@@ -20,7 +20,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
         public object Content { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-        public int UserId { get; set; }
     }
     public class ArticleInforvalidator : AbstractValidator<ArticleInfoReq>
     {
@@ -28,8 +27,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
         {
             RuleFor(x => x.Title).NotEmpty();
             RuleFor(x => x.Content).NotEmpty();
-            RuleFor(x => x.UserId).NotEmpty();
-
         }
     }
 
