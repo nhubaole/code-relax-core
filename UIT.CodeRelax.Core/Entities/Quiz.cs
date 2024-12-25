@@ -42,7 +42,7 @@ namespace UIT.CodeRelax.Core.Entities
 
         [ForeignKey("Article")]
         [Column("article_id")]
-        public int Article_id { get; set; }
+        public int ArticleId { get; set; }
         public Article? article { get; set; }
     }
 }

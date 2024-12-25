@@ -19,6 +19,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Quiz
         public string CorrectOption { get; set; }
         public string Explanation { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public int Article_id { get; set; }
+        public int ArticleId { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 existingQuiz.OptionD = Quiz.OptionD;
                 existingQuiz.CorrectOption = Quiz.CorrectOption;
                 existingQuiz.Explanation = Quiz.Explanation;
-                existingQuiz.Article_id = Quiz.Article_id;
+                existingQuiz.ArticleId = Quiz.ArticleId;
                 //_dbContext.Quizzes.Update(existingQuiz);
                 await _dbContext.SaveChangesAsync();
                 return existingQuiz;

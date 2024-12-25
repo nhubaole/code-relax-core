@@ -28,7 +28,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
         public async Task<APIResponse<Quiz>> AddQuizAsync(QuizInforReq Quiz)
         {
-           try
+            try
             {
                 Quiz model = MapToQuiz(Quiz);
                 var response = await quizRepository.AddQuizAsync(model);
@@ -157,7 +157,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 CorrectOption = quiz.CorrectOption,
                 Explanation = quiz.Explanation,
                 CreatedAt = quiz.CreatedAt,
-                Article_id = quiz.Article_id
+                ArticleId = quiz.ArticleId
             };
         }
 
@@ -174,7 +174,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 CorrectOption = quizReq.CorrectOption,
                 Explanation = quizReq.Explanation,
                 CreatedAt = quizReq.CreatedAt,
-                Article_id = quizReq.Article_id
+                ArticleId = quizReq.ArticleId
             };
         }
     }

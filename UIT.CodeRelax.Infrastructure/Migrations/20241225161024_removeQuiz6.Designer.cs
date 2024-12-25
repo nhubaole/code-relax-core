@@ -3,6 +3,7 @@ using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UIT.CodeRelax.Infrastructure.DataAccess;
@@ -12,9 +13,11 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 namespace UIT.CodeRelax.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241225161024_removeQuiz6")]
+    partial class removeQuiz6
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,7 +245,7 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ArticleId")
+                    b.Property<int>("Article_id")
                         .HasColumnType("integer")
                         .HasColumnName("article_id");
 
@@ -285,9 +288,12 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("question_text");
 
+                    b.Property<int?>("articleId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ArticleId");
+                    b.HasIndex("articleId");
 
                     b.ToTable("quizzes");
                 });
@@ -538,10 +544,8 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
             modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Quiz", b =>
                 {
                     b.HasOne("UIT.CodeRelax.Core.Entities.Article", "article")
-                        .WithMany()
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("quizzes")
+                        .HasForeignKey("articleId");
 
                     b.Navigation("article");
                 });
@@ -612,6 +616,11 @@ namespace UIT.CodeRelax.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Problem");
+                });
+
+            modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Article", b =>
+                {
+                    b.Navigation("quizzes");
                 });
 
             modelBuilder.Entity("UIT.CodeRelax.Core.Entities.Package", b =>
