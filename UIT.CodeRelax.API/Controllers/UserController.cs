@@ -26,7 +26,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <summary>
         /// Lấy thông tin tài khoản bằng id
         /// </summary>
-        /// <param name="UserId">Thông tin tài khoản</param>
+        /// <param name="UserId">ID tài khoản</param>
         /// <returns>Thông tin tài khoản</returns>
         [HttpGet("{UserId}")]
         public async Task<IActionResult> GetUserByID(int UserId)

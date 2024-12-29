@@ -50,9 +50,8 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
 
                 SignUpRes signUpRes = new SignUpRes();
-                signUpReq.Email = user.Email;
-                signUpReq.Password = user.Password;
-                signUpReq.DisplayName = user.DisplayName;
+                signUpRes.Email = user.Email;
+                signUpRes.DisplayName = user.DisplayName;
 
                 return signUpRes;
             }

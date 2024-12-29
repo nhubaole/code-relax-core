@@ -33,7 +33,6 @@ namespace UIT.CodeRelax.Core.Entities
         public int ProblemId { get; set; }
         public Problem? Problem { get; set; }
 
-
         [ForeignKey("User")]
         [Column("user_id")]
         public int UserId { get; set; }

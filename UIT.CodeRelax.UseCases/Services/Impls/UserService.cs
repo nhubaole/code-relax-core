@@ -47,11 +47,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     return new APIResponse<SignUpRes>
                     {
                         StatusCode = StatusCodeRes.ReturnWithData,
-                        Message = "Success",
+                        Message = "Sign up successed. Please login",
                         Data = new SignUpRes
                         {
                             DisplayName = signUpReq.DisplayName,
-                            Password = signUpReq.Password,
+                            Email = signUpReq.Email,
                         }
                     };
                 }
@@ -155,11 +155,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         }
                     };
                 }
-
+                
                 return new APIResponse<LoginRes>
                 {
-                    StatusCode = StatusCodeRes.Deny,
-                    Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Message = "User is not exsited. Please check email and password",
                 };
 
             }

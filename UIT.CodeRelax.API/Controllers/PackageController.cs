@@ -7,11 +7,14 @@ using UIT.CodeRelax.UseCases.DTOs.Responses.Package;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Discussion;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Package;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class PackageController : ControllerExtensions
     {
         private readonly IPackageService packageService;

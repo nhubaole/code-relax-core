@@ -37,8 +37,6 @@ namespace UIT.CodeRelax.Core.Entities
         //relation one to many with rating 
         public ICollection<Rating> ratings { get; set; } = new List<Rating>();
 
-
-
     }
 }
 
