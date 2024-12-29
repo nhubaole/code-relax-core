@@ -50,9 +50,8 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
 
                 SignUpRes signUpRes = new SignUpRes();
-                signUpReq.Email = user.Email;
-                signUpReq.Password = user.Password;
-                signUpReq.DisplayName = user.DisplayName;
+                signUpRes.Email = user.Email;
+                signUpRes.DisplayName = user.DisplayName;
 
                 return signUpRes;
             }
@@ -62,7 +61,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
-        public async Task<UserProfileRes> GetUserById(int UserId)
+        public async Task<UserProfileRes> GetUserByIdAsync(int UserId)
         {
             try
             {
@@ -80,11 +79,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     return userRes;
 
                 }
-                return null ;
-
-                //userRes.Google = "";
-                //userRes.Github = "";
-                //userRes.Facebook = "";
+                return null;
 
             }
             catch (Exception ex)
@@ -99,7 +94,6 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             UserProfileRes userRes = new UserProfileRes();
             if (user != null)
             {
-                userRes.Success = true;
                 userRes.Id = user.Id;
                 userRes.DisplayName = user.DisplayName;
                 userRes.Password = user.Password;
@@ -136,6 +130,54 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             return null;
 
+        }
+
+        public async Task<IEnumerable<UserProfileRes>> GetAllUsersAsync()
+        {
+            try
+            {
+                var users = await _dbContext.Users
+                            .Select(user => new UserProfileRes
+                            {
+                                Id = user.Id,
+                                DisplayName = user.DisplayName,
+                                Email = user.Email,
+                                Role = user.Role,
+                                CreatedAt = user.CreatedAt,
+                            })
+                            .ToListAsync();
+                return users;
+
+            }
+            catch (Exception ex) {
+                return Enumerable.Empty<UserProfileRes>();
+            }
+        }
+
+        public async Task<UserProfileRes> GetUserByEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+                UserProfileRes userRes = new UserProfileRes();
+                if (user != null)
+                {
+                    userRes.Id = user.Id;
+                    userRes.DisplayName = user.DisplayName;
+                    userRes.Password = user.Password;
+                    userRes.Email = user.Email;
+                    userRes.Role = user.Role;
+                    userRes.CreatedAt = user.CreatedAt;
+
+                    return userRes;
+
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

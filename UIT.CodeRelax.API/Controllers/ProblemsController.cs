@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.UseCases.DTOs.Requests;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
@@ -10,6 +11,8 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Authorize]
+
     public class ProblemsController : ControllerExtensions
     {
         private readonly IProblemService _problemService;
