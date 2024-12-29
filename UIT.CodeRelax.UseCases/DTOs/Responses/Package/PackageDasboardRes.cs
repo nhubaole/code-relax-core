@@ -20,7 +20,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Package
             TimeSpan timeSpan = currentDate - UpdatedAt;
             return timeSpan.Days;
         }
-        public void UpdateUpdatedAgo()
+        public void CalUpdatedAgo()
         {
             int daysSinceUpdated = GetDaysSinceUpdated();
             UpdatedAgo = daysSinceUpdated > 0 ? $"Updated {daysSinceUpdated} day{(daysSinceUpdated > 1 ? "s" : "")} ago" : "Updated today";

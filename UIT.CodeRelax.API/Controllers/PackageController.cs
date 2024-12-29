@@ -44,9 +44,22 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(200, Type = typeof(bool))]
         [HttpPost()]
-        public async Task<IActionResult> Create(NewPackageReq req)
+        public async Task<IActionResult> Create([FromBody] NewPackageReq req)
         {
             return ApiOK(await packageService.CreateNewPackage(req));
+        }
+
+        /// <summary>
+        /// update
+        /// </summary>
+        /// <param name="id">ID của package cần cập nhật</param>
+        /// <param name="req">Thông tin Pakacge mới</param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpPut()]
+        public async Task<IActionResult> Update(int id, [FromBody] NewPackageReq req)
+        {
+            return ApiOK(await packageService.UpdatePackage(id, req));
         }
 
         /// <summary>

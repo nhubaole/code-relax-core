@@ -41,7 +41,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.Id = savedPackage.Id;
                     res.Content = savedPackage.Content;
                     res.UpdatedAt = savedPackage.UpdatedAt;
-                    res.UpdateUpdatedAgo();
+                    res.CalUpdatedAgo();
 
                     return new APIResponse<PackageDasboardRes>
                     {
@@ -88,7 +88,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 pd.NumberParticipants = 0;
                 pd.UpdatedAt = package.UpdatedAt;
 
-                pd.UpdateUpdatedAgo();
+                pd.CalUpdatedAgo();
 
 
                 res.Add(pd);
@@ -115,9 +115,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.Id = package.Id;
                     res.Content = package.Content;
                     res.UpdatedAt = package.UpdatedAt;
-                    res.UpdateUpdatedAgo();
-
-
+                    res.CalUpdatedAgo();
 
                     return new APIResponse<PackageDasboardRes>
                     {
@@ -171,9 +169,52 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package)
+        public async Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Package existed  = await _packageRepository.GetByIDAsync(packageId);
+                if(existed != null)
+                {
+                    existed.UpdatedAt = DateTime.UtcNow;
+                    existed.Content = package.Content;
+                    existed.Type = package.Type;
+
+                    await _packageRepository.UpdatePackageAsync(existed);
+                    PackageDasboardRes res = new PackageDasboardRes();
+                    res.Id = existed.Id;
+                    res.Content = existed.Content;
+                    res.UpdatedAt = existed.UpdatedAt;
+                    res.CalUpdatedAgo();
+                    return new APIResponse<PackageDasboardRes>
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Data = res
+                    };
+                }
+
+
+                return new APIResponse<PackageDasboardRes>
+                {
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Data = null
+
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<PackageDasboardRes>
+                {
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Message = string.IsNullOrEmpty(ex.Message) ? "Not Success" : ex.Message,
+                    Data = null
+                };
+            }
+            finally
+            {
+                erroMesssage = string.Empty;
+            }
         }
 
         public Task<APIResponse<string>> DeletePackage(int packgeId)

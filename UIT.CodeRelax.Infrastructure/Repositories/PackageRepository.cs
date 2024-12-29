@@ -102,7 +102,6 @@ namespace UIT.CodeRelax.UseCases.Repositories
         {
             try
             {
-                package.UpdatedAt = DateTime.UtcNow;
 
                 var savedPackage = await _dbContext.Packages.FirstOrDefaultAsync(p => p.Id == package.Id);
                 if (savedPackage != null)
