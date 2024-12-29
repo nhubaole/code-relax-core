@@ -23,6 +23,6 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
         Task<APIResponse<bool>> Delete(int problemID);
         Task<APIResponse<bool>> Update(UpdateProblemReq req, int id);
 
-        Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req);
+        Task<APIResponse<int>> CreateProblem(CreateProblemReq req);
     }
 }

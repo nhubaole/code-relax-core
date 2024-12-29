@@ -15,7 +15,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
         public Task<GetProblemRes> GetByIDAsync(int id);
         public Task<bool> DeleteAsync(int id);
         public Task<bool> UpdateAsync(UpdateProblemReq req, int id);
-        public Task<Problem> CreateNewProblem(Problem problemReq, List<string> tags);
+        public Task<Problem> CreateProblemAsync(CreateProblemReq req);
 
         //public Task<IEumerable<GetProblemDashboardRes>>GetAllProDabAsync(int idUser);
 

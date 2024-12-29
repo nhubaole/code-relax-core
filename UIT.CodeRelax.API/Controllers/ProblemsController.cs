@@ -11,7 +11,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Authorize]
+    //[Authorize]
 
     public class ProblemsController : ControllerExtensions
     {
@@ -112,10 +112,14 @@ namespace UIT.CodeRelax.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> CreateProblem([FromBody] CreateProblemReq req)
+        /// <summary>
+        /// Update
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> CreateProblem(CreateProblemReq req)
         {
-
-            return ApiOK(await _problemService.CreateNewProblem(req));
+            return ApiOK(await _problemService.CreateProblem(req));
 
         }
 

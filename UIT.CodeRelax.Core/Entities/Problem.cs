@@ -40,6 +40,7 @@ namespace UIT.CodeRelax.Core.Entities
         public ICollection<Submission> Submissions { get; set; } = new List<Submission>();
 
         // one to many problem_tag
+
         public ICollection<ProblemTag> ProblemTags { get; set; } = new List<ProblemTag>();
 
         //relation one to many with problem package 

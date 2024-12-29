@@ -375,43 +375,27 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
 
 
-        public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
+        public async Task<APIResponse<int>> CreateProblem(CreateProblemReq req)
         {
             try
             {
-                Problem problem = new Problem()
-                {
-                    Title = req.Title,
-                    Explaination = req.Explaination,
-                    Difficulty = req.Difficulty,
-                };
 
-                Problem newPro = await _problemRepository.CreateNewProblem(problem, req.Tags);
+                Problem newProblem = await _problemRepository.CreateProblemAsync(req);
 
-                return new APIResponse<GetProblemRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.Success,
                     Message = "Success",
-                    Data = new GetProblemRes()
-                    {
-                        Id = newPro.Id,
-                        Title = newPro.Title,
-                        Explaination = newPro.Explaination,
-                        Difficulty = newPro.Difficulty,
-                        NumOfAcceptance = 0,
-                        NumOfSubmission = 0,
-                        CreatedAt = newPro.CreatedAt,
-
-                    },
+                    Data = newProblem.Id,
                 };
             }
             catch (Exception ex)
             {
-                return new APIResponse<GetProblemRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = null,
+                    Data = -1,
                 };
                 throw new Exception("ProblemService: An error occurred while creating problem\n", ex);
             }

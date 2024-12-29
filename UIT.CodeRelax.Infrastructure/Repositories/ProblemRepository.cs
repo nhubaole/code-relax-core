@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.Infrastructure.DataAccess;
@@ -25,27 +26,32 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             _tagRespository = tagRespository;
         }
 
-        public async Task<Problem> CreateNewProblem(Problem problemReq, List<string> tags)
+        public async Task<Problem> CreateProblemAsync(CreateProblemReq req)
         {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
             try
             {
-                Problem problem = new Problem()
+                // Step 1: Create the Problem entity
+                var problem = new Problem
                 {
-                    Title = problemReq.Title,
-                    Explaination = problemReq.Explaination,
-                    Difficulty = problemReq.Difficulty,
+                    Title = req.Title,
+                    Explaination = req.Explaination,
+                    Difficulty = req.Difficulty,
+                    FunctionName = req.FunctionName,
+                    ReturnType = req.ReturnType,
                     CreatedAt = DateTime.UtcNow
-
                 };
 
+                // Add the problem to the database
                 await _dbContext.Problems.AddAsync(problem);
-                await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync(); // Save to generate the Problem ID
 
-                if (tags.Count() > 0)
+                // Step 2: Handle Tags (if any exist)
+                if (req.Tags?.Any() == true)
                 {
-                    foreach (string tag in tags)
+                    foreach (string tagName in req.Tags)
                     {
-                        int tagId = await _tagRespository.GetIdByName(tag);
+                        int tagId = await _tagRespository.GetIdByName(tagName);
 
                         if (tagId != -1)
                         {
@@ -56,23 +62,43 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                             };
 
                             await _dbContext.ProblemTags.AddAsync(problemTag);
-                            await _dbContext.SaveChangesAsync();
                         }
-
-
-                        Console.WriteLine("Addede to ProblemTag: {0} : {1}", problem.Id, tagId);
                     }
-
                 }
 
-                return problem;
+                // Step 3: Handle Testcases (if any exist)
+                if (req.Input?.Any() == true && req.Output?.Any() == true && req.Input.Count == req.Output.Count)
+                {
+                    for (int i = 0; i < req.Input.Count; i++)
+                    {
+                        var testcase = new Testcase
+                        {
+                            ProblemId = problem.Id,
+                            Input = JsonSerializer.Serialize(req.Input[i]),
+                            Output = JsonSerializer.Serialize(req.Output[i]),
+                            IsExample = i < 3, // First three test cases are examples
+                            CreatedAt = DateTime.UtcNow
+                        };
 
+                        await _dbContext.Testcases.AddAsync(testcase);
+                    }
+                }
+
+                // Save all changes and commit the transaction
+                await _dbContext.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return problem;
             }
             catch (Exception ex)
             {
-                throw;
+                // Rollback the transaction in case of an error
+                await transaction.RollbackAsync();
+                throw new Exception("Error while creating the problem", ex);
             }
         }
+
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -94,9 +120,28 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                var problems = await _dbContext.Problems.ToArrayAsync();
+                var problems = await _dbContext.Problems
+                                   .Include(p => p.Testcases)
+                                   .Include(p => p.ProblemTags)
+                                       .ThenInclude(pt => pt.Tag)
+                                   .ToListAsync();
 
-                return _mapper.Map<IEnumerable<GetProblemRes>>(problems);
+                var problemResponses = problems.Select(p => new GetProblemRes
+                {
+                    Id = p.Id,
+                    Title = p.Title,
+                    Explaination = p.Explaination,
+                    FunctionName = p.FunctionName ?? string.Empty,
+                    ReturnType = p.ReturnType ?? string.Empty,
+                    Difficulty = p.Difficulty,
+                    NumOfAcceptance = p.NumOfAcceptance,
+                    NumOfSubmission = p.NumOfSubmission,
+                    TotalTestCase = p.Testcases.Count,
+                    Tag = p.ProblemTags.Select(pt => pt.Tag.Name).ToList(),
+                    CreatedAt = p.CreatedAt
+                });
+
+                return problemResponses;
             }
             catch (Exception ex)
             {
