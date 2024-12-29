@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,15 +13,12 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.User
         public string DisplayName { get; set; }
 
         public string Email { get; set; }
-
+        public DateTime CreatedAt { get; set; } 
         public string Password { get; set; }
-
         public int Role { get; set; }
-
-        //public string Google { get; set; }
-        //public string Github { get; set; }
-        //public string Facebook { get; set; }
-
-
+        public string AvatarUrl { get; set; }
+        public string Google { get; set; }
+        public string Github { get; set; }
+        public string Facebook { get; set; } 
     }
 }

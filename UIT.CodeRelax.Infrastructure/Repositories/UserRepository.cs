@@ -75,7 +75,10 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     userRes.Email = user.Email;
                     userRes.Role = user.Role;
                     userRes.CreatedAt = user.CreatedAt;
-
+                    userRes.AvatarUrl = user.AvatarUrl;
+                    userRes.Facebook = user.Facebook;
+                    userRes.Google = user.Google;
+                    userRes.Github = user.Github;
                     return userRes;
 
                 }
@@ -116,7 +119,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 userExisted.Email = user.Email;
                 userExisted.Password = user.Password;
                 userExisted.DisplayName = user.DisplayName;
-
+                userExisted.AvatarUrl = user.AvatarUrl;
+                userExisted.Role = user.Role;   
+                userExisted.CreatedAt = user.CreatedAt;
+                userExisted.Facebook = user.Facebook;
+                userExisted.Google = user.Google;
+                userExisted.Github  = user.Github;
 
                 _dbContext.Users.Update(userExisted);
 
@@ -144,6 +152,10 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                                 Email = user.Email,
                                 Role = user.Role,
                                 CreatedAt = user.CreatedAt,
+                                AvatarUrl = user.AvatarUrl,
+                                Github = user.Github,
+                                Google = user.Google,
+                                Facebook = user.Facebook,
                             })
                             .ToListAsync();
                 return users;
@@ -168,6 +180,10 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     userRes.Email = user.Email;
                     userRes.Role = user.Role;
                     userRes.CreatedAt = user.CreatedAt;
+                    userRes.AvatarUrl = user.AvatarUrl;
+                    userRes.Google = user.Google;
+                    userRes.Facebook = user.Facebook;
+                    userRes.Github = user.Github;
 
                     return userRes;
 
