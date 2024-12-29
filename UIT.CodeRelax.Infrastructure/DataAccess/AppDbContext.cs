@@ -35,7 +35,8 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
                 .HasKey(sr => new { sr.SubmissionId, sr.PassedTestcaseId });
 
             modelBuilder.Entity<Rating>()
-                .HasKey(r => new { r.User_Id, r.Problem_Id });
+                .HasKey(r => new { r.UserID, r.ProblemID });
+        }
 
             //notify that these properties is jsonB
             modelBuilder.Entity<Article>(entity =>

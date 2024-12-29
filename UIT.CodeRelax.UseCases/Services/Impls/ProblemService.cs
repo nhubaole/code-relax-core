@@ -530,5 +530,53 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
+
+        public async Task<APIResponse<bool>> Delete(int id)
+        {
+            try
+            {
+                var isDeleted = await _problemRepository.DeleteAsync(id);
+
+                return new APIResponse<bool>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = isDeleted
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<bool>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = false
+                };
+            }
+        }
+
+        public async Task<APIResponse<bool>> Update(UpdateProblemReq req, int id)
+        {
+            try
+            {
+                var isUpdated = await _problemRepository.UpdateAsync(req, id);
+
+                return new APIResponse<bool>
+                {
+                    StatusCode = StatusCodeRes.ReturnWithData,
+                    Message = "Success",
+                    Data = isUpdated
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<bool>
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = false
+                };
+            }
+        }
     }
 }

@@ -84,6 +84,33 @@ namespace UIT.CodeRelax.API.Controllers
             return ApiOK(result);
         }
 
+        /// <summary>
+        /// Delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(IEnumerable<bool>))]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _problemService.Delete(id);
+            return ApiOK(result);
+        }
+
+        /// <summary>
+        /// Update
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(IEnumerable<bool>))]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(UpdateProblemReq req, int id)
+        {
+            var result = await _problemService.Update(req, id);
+            return ApiOK(result);
+        }
+
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateProblem([FromBody] CreateProblemReq req)
         {

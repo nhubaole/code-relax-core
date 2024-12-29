@@ -13,15 +13,19 @@ namespace UIT.CodeRelax.Core.Entities
     {
         [ForeignKey("User")]
         [Column("user_id")]
-        public int User_Id { get; set; }    
+        public int UserID { get; set; }
         public User User { get; set; }
 
         [ForeignKey("Problem")]
         [Column("problem_id")]
 
-        public int Problem_Id { get; set; }
+        public int ProblemID { get; set; }
         public Problem Problem { get; set; }
-
+        [Column("num_of_star")]
         public int NumberOfStar { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+        [Column("updated_at")]
+        public DateTime UpdatedAt { get; set; }
     }
 }

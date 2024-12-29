@@ -29,23 +29,25 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                Problem problem = new Problem() { 
+                Problem problem = new Problem()
+                {
                     Title = problemReq.Title,
                     Explaination = problemReq.Explaination,
                     Difficulty = problemReq.Difficulty,
                     CreatedAt = DateTime.UtcNow
 
-                } ;
+                };
 
                 await _dbContext.Problems.AddAsync(problem);
-                await _dbContext.SaveChangesAsync();    
+                await _dbContext.SaveChangesAsync();
 
-                if(tags.Count() > 0)
+                if (tags.Count() > 0)
                 {
-                    foreach(string tag in tags) {
+                    foreach (string tag in tags)
+                    {
                         int tagId = await _tagRespository.GetIdByName(tag);
 
-                        if(tagId != -1)
+                        if (tagId != -1)
                         {
                             var problemTag = new ProblemTag
                             {
@@ -56,7 +58,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                             await _dbContext.ProblemTags.AddAsync(problemTag);
                             await _dbContext.SaveChangesAsync();
                         }
-                        
+
 
                         Console.WriteLine("Addede to ProblemTag: {0} : {1}", problem.Id, tagId);
                     }
@@ -65,12 +67,29 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
                 return problem;
 
-            } 
+            }
             catch (Exception ex)
             {
                 throw;
             }
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            try
+            {
+                var problem = new Problem { Id = id };
+                _dbContext.Problems.Attach(problem);
+                _dbContext.Problems.Remove(problem);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<IEnumerable<GetProblemRes>> GetAllAsync()
         {
             try
@@ -99,6 +118,26 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
+        public async Task<bool> UpdateAsync(UpdateProblemReq req, int id)
+        {
+            try
+            {
+                var problem = await _dbContext.Problems.FindAsync(id) ?? throw new Exception("Discussion not found");
+                problem.Title = req.Title;
+                problem.Explaination = req.Explaination;
+                problem.Difficulty = req.Difficulty;
+                problem.FunctionName = req.FunctionName;
+                problem.ReturnType = req.ReturnType;
 
+                _dbContext.Problems.Update(problem);
+                await _dbContext.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }

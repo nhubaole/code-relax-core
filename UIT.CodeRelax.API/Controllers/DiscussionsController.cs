@@ -10,7 +10,7 @@ using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     [Authorize]
 
@@ -26,7 +26,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(201, Type = typeof(bool))]
         [HttpPost()]
         public async Task<IActionResult> Create(CreateDiscussionReq req)
         {
@@ -34,15 +34,28 @@ namespace UIT.CodeRelax.API.Controllers
         }
 
         /// <summary>
-        /// Create
+        /// Update
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(201, Type = typeof(bool))]
         [HttpPut()]
         public async Task<IActionResult> Update(UpdateDiscussionReq req)
         {
             return ApiOK(await _discussionService.Update(req));
+        }
+
+        /// <summary>
+        /// Get By ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(DiscussionRes))]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByProblemID(int id)
+        {
+            var result = await _discussionService.GetByID(id);
+            return ApiOK(result);
         }
 
         /// <summary>

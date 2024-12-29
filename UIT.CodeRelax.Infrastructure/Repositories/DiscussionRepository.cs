@@ -24,7 +24,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateAsync(CreateDiscussionReq req)
+        public async Task<int> CreateAsync(CreateDiscussionReq req)
         {
 
             try
@@ -42,7 +42,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 await _dbContext.Discussions.AddAsync(discussion);
                 await _dbContext.SaveChangesAsync();
 
-                return true;
+                return discussion.ID;
             }
             catch (Exception ex)
             {
@@ -64,6 +64,21 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<DiscussionRes> GetByIdAsync(int id)
+        {
+            try
+            {
+                var discussion = await _dbContext.Discussions
+                                        .Include(s => s.User)
+                                        .FirstOrDefaultAsync(x => x.ID == id);
+                return _mapper.Map<DiscussionRes>(discussion);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
 

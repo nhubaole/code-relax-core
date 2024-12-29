@@ -20,6 +20,8 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
         Task<APIResponse<IEnumerable<TestcaseRes>>> GetTestCase(int problemID);
         Task<APIResponse<GetProblemRes>> GetByID(int problemID);
         Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll();
+        Task<APIResponse<bool>> Delete(int problemID);
+        Task<APIResponse<bool>> Update(UpdateProblemReq req, int id);
 
         Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req);
     }
