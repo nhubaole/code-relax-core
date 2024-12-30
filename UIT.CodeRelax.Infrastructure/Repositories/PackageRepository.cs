@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.Infrastructure.DataAccess;
 using UIT.CodeRelax.Infrastructure.Repositories;
+using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
+using UIT.CodeRelax.UseCases.DTOs.Responses;
 
 namespace UIT.CodeRelax.UseCases.Repositories
 {
@@ -17,22 +19,40 @@ namespace UIT.CodeRelax.UseCases.Repositories
             _mapper = mapper;
         }
 
-        public async Task AddProblemToPackage(int packageId, Problem problem)
+        public async Task<IEnumerable<Problem>> AddProblemToPackage(int packageId, int problemId)
         {
+            var existingProblemPackage = await _dbContext.ProblemPackages
+            .FirstOrDefaultAsync(pp => pp.PackageId == packageId && pp.ProblemId == problemId);
+
+            if (existingProblemPackage != null)
+            {
+                throw new InvalidOperationException($"Problem with ID {problemId} is already in package.");
+            }
+
             var package = await GetByIDAsync(packageId);
             if (package == null) {
                 throw new InvalidOperationException($"Package with ID {packageId} does not exist.");
             }
-
+            var problem = await _dbContext.Problems.FirstOrDefaultAsync(p => p.Id == problemId);
+            if (problem == null)
+            {
+                throw new InvalidOperationException($"Package with ID {packageId} does not exist.");
+            }
             var problemPackage = new ProblemPackage
             {
                 PackageId = packageId,
-                Problem = problem
+                ProblemId = problemId
             };
 
             package.ProblemPackages.Add(problemPackage);
 
             await _dbContext.SaveChangesAsync();
+
+            return await _dbContext.Packages
+                   .Where(p => p.Id == packageId)
+                   .SelectMany(p => p.ProblemPackages)
+                   .Select(pp => pp.Problem)
+                   .ToListAsync();
         }
 
         public async Task<Package> CreateNewPackage(Package package)

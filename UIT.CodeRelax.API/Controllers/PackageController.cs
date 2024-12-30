@@ -13,7 +13,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
 
     public class PackageController : ControllerExtensions
     {
@@ -73,5 +73,30 @@ namespace UIT.CodeRelax.API.Controllers
         {
             return ApiOK(await packageService.GetById(id));
         }
+
+        /// <summary>
+        /// Get problems of package by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpGet("{id}/problems")]
+        public async Task<IActionResult> GetProblemsOfPackage(int id)
+        {
+            return ApiOK(await packageService.GetProblemsOfPackage(id));
+        }
+
+        /// <summary>
+        /// Add a problem to packge
+        /// </summary>
+        /// <param name="req">Object chứa idProblem và idPackge</param>
+        /// <returns>List problems of pakage</returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpPost("add-problem")]
+        public async Task<IActionResult> AddProblemToPackge([FromBody] AddProblemPackageReq req)
+        {
+            return ApiOK(await packageService.AddProblemToPakage(req));
+        }
+
     }
 }
