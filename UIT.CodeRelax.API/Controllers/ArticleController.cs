@@ -68,6 +68,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateArticle([FromBody]ArticleInfoReq article)
         {
+
             return ApiOK (await articleService.AddArticleAsync(article));
         }
 
