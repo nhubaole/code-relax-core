@@ -8,7 +8,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class ArticleController : ControllerExtensions
     {
         private readonly IArticleService articleService;

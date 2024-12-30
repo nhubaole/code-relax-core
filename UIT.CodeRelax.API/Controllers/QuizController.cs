@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Quiz;
 using UIT.CodeRelax.UseCases.Services.Impls;
@@ -8,7 +9,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class QuizController : ControllerExtensions
     {
         private readonly IQuizService _quizService;
