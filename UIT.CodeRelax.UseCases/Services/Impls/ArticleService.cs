@@ -172,6 +172,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Id = article.Id,
                 Title = article.Title,
                 Summary = article.Summary,
+                Cover = article.Cover,
                 SubTitle = article.SubTitle != null
                         ? JsonSerializer.Deserialize<List<string>>(article.SubTitle)
                         : new List<string>(),
@@ -208,10 +209,10 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Id = dto.Id,
                 Title = dto.Title,
                 Summary = dto.Summary,
+                Cover = dto.Cover,
                 SubTitle = dto.SubTitle != null
                     ? JsonSerializer.SerializeToDocument(dto.SubTitle)
                     : null, 
-                Cover = dto.Cover,
                 Content = dto.Content != null
                     ? JsonSerializer.SerializeToDocument(dto.Content)
                     : null, 
