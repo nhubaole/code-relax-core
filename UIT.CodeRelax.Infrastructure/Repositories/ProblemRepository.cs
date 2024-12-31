@@ -71,11 +71,21 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 {
                     for (int i = 0; i < req.Input.Count; i++)
                     {
+                        // Deserialize the input if necessary and convert it to the desired JSON format
+                        var formattedInput = JsonSerializer.Deserialize<Dictionary<string, object>>(req.Input[i]);
+                        var formattedOutput = JsonSerializer.Deserialize<object>(req.Output[i]);
+
                         var testcase = new Testcase
                         {
                             ProblemId = problem.Id,
-                            Input = JsonSerializer.Serialize(req.Input[i]),
-                            Output = JsonSerializer.Serialize(req.Output[i]),
+                            Input = JsonSerializer.Serialize(formattedInput, new JsonSerializerOptions
+                            {
+                                WriteIndented = true // Ensures pretty formatting with indentation
+                            }),
+                            Output = JsonSerializer.Serialize(formattedOutput, new JsonSerializerOptions
+                            {
+                                WriteIndented = true
+                            }),
                             IsExample = i < 3, // First three test cases are examples
                             CreatedAt = DateTime.UtcNow
                         };
@@ -154,8 +164,26 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         {
             try
             {
-                var problem = await _dbContext.Problems.FirstOrDefaultAsync(x => x.Id == id);
-                return _mapper.Map<GetProblemRes>(problem);
+                var problem = await _dbContext.Problems
+                                    .Include(p => p.Testcases)
+                                   .Include(p => p.ProblemTags)
+                                       .ThenInclude(pt => pt.Tag).FirstOrDefaultAsync(x => x.Id == id);
+                var problemResponses = new GetProblemRes
+                {
+                    Id = problem.Id,
+                    Title = problem.Title,
+                    Explaination = problem.Explaination,
+                    FunctionName = problem.FunctionName ?? string.Empty,
+                    ReturnType = problem.ReturnType ?? string.Empty,
+                    Difficulty = problem.Difficulty,
+                    NumOfAcceptance = problem.NumOfAcceptance,
+                    NumOfSubmission = problem.NumOfSubmission,
+                    TotalTestCase = problem.Testcases.Count,
+                    Tag = problem.ProblemTags.Select(pt => pt.Tag.Name).ToList(),
+                    CreatedAt = problem.CreatedAt
+                };
+
+                return problemResponses;
             }
             catch (Exception ex)
             {

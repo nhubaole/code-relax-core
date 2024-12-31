@@ -37,6 +37,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
+                var problem = await GetByID(req.ProblemId);
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
@@ -46,7 +47,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
-                    var response = await RunCode(sourceFilePath, req.Language);
+                    var response = await RunCode(sourceFilePath, req.Language, problem.Data.ReturnType);
                     if (response.Success is false)
                     {
                         isAccept = false;
@@ -253,7 +254,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             return tempPath;
         }
 
-        private async Task<SubmitCodeRes> RunCode(string filePath, string language)
+        private async Task<SubmitCodeRes> RunCode(string filePath, string language, string returnType)
         {
             var processInfo = new ProcessStartInfo();
             processInfo.RedirectStandardOutput = true;
@@ -340,11 +341,12 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             var output = process.StandardOutput.ReadToEnd().Replace("\r\n", "");
             var errors = process.StandardError.ReadToEnd().Replace("\r\n", "");
             process.WaitForExit();
+            object parsedOutput = Converter.ParseOutput(output, returnType);
 
             return new SubmitCodeRes
             {
                 Success = process.ExitCode == 0,
-                Output = output,
+                Output = parsedOutput,
                 Errors = errors
             };
         }
@@ -407,6 +409,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
+                var problem = await GetByID(req.ProblemId);
                 var exampleTestCases = testCases.Data.Where(x => x.IsExample).ToList();
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
@@ -417,7 +420,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
-                    var response = await RunCode(sourceFilePath, req.Language);
+                    var response = await RunCode(sourceFilePath, req.Language, problem.Data.ReturnType);
                     if (response.Success is false)
                     {
                         isAccept = false;
