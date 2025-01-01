@@ -166,6 +166,89 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
+        public async Task<GetLeaderBoardInfoRes> GetLeaderBoardInfoAsync(int userId)
+        {
+            try
+            {
+                var users = await _dbContext.Users
+                                    .Include(u => u.Submissions)
+                                        .ThenInclude(s => s.Problem)
+                                    .ToListAsync();
+
+                var leaderboard = new List<UserRankInfo>();
+
+                foreach (var user in users)
+                {
+                    var submissions = user.Submissions;
+
+                    int easySolved = 0;
+                    int mediumSolved = 0;
+                    int hardSolved = 0;
+
+                    foreach (var submission in submissions)
+                    {
+                        if (submission.Status == 1)
+                        {
+                            if (submission.Problem.Difficulty == 0)
+                            {
+                                easySolved++;
+                            }
+                            else if (submission.Problem.Difficulty == 1)
+                            {
+                                mediumSolved++;
+                            }
+                            else if (submission.Problem.Difficulty == 2)
+                            {
+                                hardSolved++;
+                            }
+                        }
+                    }
+
+                    int totalSubmissions = submissions.Count;
+                    if (totalSubmissions == 0)
+                    {
+                        continue;
+                    }
+
+                    decimal score = (easySolved + mediumSolved * 2 + hardSolved * 3) / (decimal)totalSubmissions;
+
+                    leaderboard.Add(new UserRankInfo
+                    {
+                        UserName = user.DisplayName,
+                        UserAvatar = user.AvatarUrl,
+                        Rank = 0, 
+                        TotalSubmission = totalSubmissions,
+                        TotalSolved = easySolved + mediumSolved + hardSolved,
+                        Acceptance = Math.Round((decimal)(easySolved + mediumSolved + hardSolved) / totalSubmissions * 100, 2),
+                        Score = score
+                    });
+                }
+
+                leaderboard = leaderboard.OrderByDescending(x => x.Score).ToList();
+
+                int rank = 1;
+                foreach (var userRank in leaderboard)
+                {
+                    userRank.Rank = rank++;
+                }
+
+                var currentUser = leaderboard.FirstOrDefault(x => x.UserName == users.FirstOrDefault(u => u.Id == userId)?.DisplayName);
+
+                return new GetLeaderBoardInfoRes
+                {
+                    UserName = currentUser?.UserName ?? "",
+                    UserAvatar = currentUser?.UserAvatar ?? "",
+                    Rank = currentUser?.Rank ?? 0,
+                    ListUser = leaderboard
+                };
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
         public async Task<UserProfileRes> GetUserByEmailAsync(string email)
         {
             try

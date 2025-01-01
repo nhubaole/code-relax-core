@@ -23,9 +23,16 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
         public async Task<Quiz> AddQuizAsync(Quiz Quiz)
         {
-            await _dbContext.Quizzes.AddAsync(Quiz);
-            await _dbContext.SaveChangesAsync();
-            return Quiz;
+            try
+            {
+                await _dbContext.Quizzes.AddAsync(Quiz);
+                await _dbContext.SaveChangesAsync();
+                return Quiz;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public async Task DeleteQuizAsync(int id)

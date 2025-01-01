@@ -13,7 +13,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Discussion
         public UserProfileRes User { get; set; }
         public int ProblemID { get; set; }
         public string Content { get; set; }
-
+        public string? ImageContent { get; set; }
         public string Type { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

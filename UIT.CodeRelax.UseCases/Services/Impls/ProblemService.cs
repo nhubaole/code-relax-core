@@ -37,16 +37,17 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
-                var result = new SubmitCodeRes();
+                var problem = await GetByID(req.ProblemId, null);
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
+                int passedCount = 0;
+                int totalCount = testCases.Data.Count();
 
                 foreach (var testCase in testCases.Data)
                 {
-
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
-                    var response = await RunCode(sourceFilePath, req.Language);
+                    var response = await RunCode(sourceFilePath, req.Language, problem.Data.ReturnType);
                     if (response.Success is false)
                     {
                         isAccept = false;
@@ -57,12 +58,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Data = new SubmitCodeRes
                             {
                                 Success = false,
-                                Output = response.Errors
+                                Output = response.Errors,
                             }
                         };
                     }
 
-                    // Parse testCase.Output to compare
                     var expectedOutput = JsonConvert.DeserializeObject<Dictionary<string, object>>(testCase.Output)["output"];
                     if (!Comparer.CompareOutputs(response.Output, expectedOutput))
                     {
@@ -72,22 +72,23 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     else
                     {
                         outputs.Add(response.Output);
+                        passedCount++;
                     }
 
-                    // Clean up source file after execution
                     File.Delete(sourceFilePath);
                 }
+
 
                 if (!isAccept)
                 {
                     return new APIResponse<SubmitCodeRes>
                     {
-                        StatusCode = StatusCodeRes.Deny,
-                        Message = "One or more test case is failed",
+                        StatusCode = StatusCodeRes.Success,
+                        Message = $"{passedCount}/{totalCount} test cases passed",
                         Data = new SubmitCodeRes
                         {
                             Success = false,
-                            Output = outputs[0] // Return the output that failed
+                            Output = $"{passedCount}/{totalCount}",
                         }
                     };
                 }
@@ -95,11 +96,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = StatusCodeRes.Success,
-                    Message = "All test case passed",
+                    Message = $"{passedCount}/{totalCount} test cases passed",
                     Data = new SubmitCodeRes
                     {
                         Success = true,
-                        Output = outputs[0] // Return the first successful output
+                        Output = $"{passedCount}/{totalCount}",
                     }
                 };
             }
@@ -108,10 +109,15 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = StatusCodeRes.InternalError,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    Data = new SubmitCodeRes
+                    {
+                        Success = false,
+                    }
                 };
             }
         }
+
 
 
         public async Task<APIResponse<IEnumerable<TestcaseRes>>> GetTestCase(int problemID)
@@ -142,7 +148,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             string fullSourceCode = "";
             var tempPath = Path.GetTempFileName();
-            var problem = await _problemRepository.GetByIDAsync(problemId);
+            var problem = await _problemRepository.GetByIDAsync(problemId, null);
             string functionName = problem.FunctionName;
 
             var inputData = JsonConvert.DeserializeObject<JObject>(param);
@@ -236,14 +242,23 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             else if (language == "Python")
             {
                 string[] lines = convertedParams.Split('\n');
-                string numsValue = lines[0].Split('=')[1].Trim();
-                string targetValue = lines[1].Split('=')[1].Trim();
 
-                // Format the params as function arguments
-                string formattedParams = $"{numsValue}, {targetValue}";
+                var paramValues = new List<string>();
+                foreach (var line in lines)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        string paramValue = line.Split('=')[1].Trim();
+                        paramValues.Add(paramValue);
+                    }
+                }
+
+                string formattedParams = string.Join(", ", paramValues);
+
                 fullSourceCode = $"{sourceCode}" +
                                  $"\nprint({functionName}({formattedParams}))";
             }
+
             else
             {
                 tempPath = Path.ChangeExtension(tempPath, extension);
@@ -253,7 +268,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             return tempPath;
         }
 
-        private async Task<SubmitCodeRes> RunCode(string filePath, string language)
+        private async Task<SubmitCodeRes> RunCode(string filePath, string language, string returnType)
         {
             var processInfo = new ProcessStartInfo();
             processInfo.RedirectStandardOutput = true;
@@ -340,20 +355,21 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             var output = process.StandardOutput.ReadToEnd().Replace("\r\n", "");
             var errors = process.StandardError.ReadToEnd().Replace("\r\n", "");
             process.WaitForExit();
+            object parsedOutput = Converter.ParseOutput(output, returnType);
 
             return new SubmitCodeRes
             {
                 Success = process.ExitCode == 0,
-                Output = output,
+                Output = parsedOutput,
                 Errors = errors
             };
         }
 
-        public async Task<APIResponse<GetProblemRes>> GetByID(int problemID)
+        public async Task<APIResponse<GetProblemRes>> GetByID(int problemID, int? userId)
         {
             try
             {
-                var problem = await _problemRepository.GetByIDAsync(problemID);
+                var problem = await _problemRepository.GetByIDAsync(problemID, userId);
                 return new APIResponse<GetProblemRes>
                 {
                     StatusCode = StatusCodeRes.Success,
@@ -375,43 +391,27 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
 
 
-        public async Task<APIResponse<GetProblemRes>> CreateNewProblem(CreateProblemReq req)
+        public async Task<APIResponse<int>> CreateProblem(CreateProblemReq req)
         {
             try
             {
-                Problem problem = new Problem()
-                {
-                    Title = req.Title,
-                    Explaination = req.Explaination,
-                    Difficulty = req.Difficulty,
-                };
 
-                Problem newPro = await _problemRepository.CreateNewProblem(problem, req.Tags);
+                Problem newProblem = await _problemRepository.CreateProblemAsync(req);
 
-                return new APIResponse<GetProblemRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.Success,
                     Message = "Success",
-                    Data = new GetProblemRes()
-                    {
-                        Id = newPro.Id,
-                        Title = newPro.Title,
-                        Explaination = newPro.Explaination,
-                        Difficulty = newPro.Difficulty,
-                        NumOfAcceptance = 0,
-                        NumOfSubmission = 0,
-                        CreatedAt = newPro.CreatedAt,
-
-                    },
+                    Data = newProblem.Id,
                 };
             }
             catch (Exception ex)
             {
-                return new APIResponse<GetProblemRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message,
-                    Data = null,
+                    Data = -1,
                 };
                 throw new Exception("ProblemService: An error occurred while creating problem\n", ex);
             }
@@ -423,6 +423,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
+                var problem = await GetByID(req.ProblemId, null);
                 var exampleTestCases = testCases.Data.Where(x => x.IsExample).ToList();
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
@@ -433,7 +434,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
-                    var response = await RunCode(sourceFilePath, req.Language);
+                    var response = await RunCode(sourceFilePath, req.Language, problem.Data.ReturnType);
                     if (response.Success is false)
                     {
                         isAccept = false;
@@ -500,11 +501,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll()
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll(int? userId)
         {
             try
             {
-                var problems = await _problemRepository.GetAllAsync();
+                var problems = await _problemRepository.GetAllAsync(userId);
                 if (problems == null || !problems.Any())
                 {
                     return new APIResponse<IEnumerable<GetProblemRes>>

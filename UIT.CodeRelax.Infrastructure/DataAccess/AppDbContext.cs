@@ -42,9 +42,9 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
             modelBuilder.Entity<Article>(entity =>
             {
                 entity.Property(e => e.SubTitle)
-                      .HasColumnType("jsonb");
+                      .HasColumnType("text[]");
                 entity.Property(e => e.Content)
-                      .HasColumnType("jsonb");
+                      .HasColumnType("text[]");
             });
     
 

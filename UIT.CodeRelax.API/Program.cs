@@ -15,12 +15,30 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
+using Supabase;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.WriteIndented = true;
+}); ;
+
+builder.Services.AddScoped<Supabase.Client>(_ =>
+    new Supabase.Client(
+        builder.Configuration["SupabaseUrl"],
+        builder.Configuration["SupabaseKey"],
+        new SupabaseOptions
+        {
+            AutoRefreshToken = true,
+            AutoConnectRealtime = true,
+        }
+    )
+);
 
 // Add request validator
 builder.Services.AddFluentValidationAutoValidation();
@@ -55,6 +73,12 @@ builder.Services.AddScoped<IArticleService, ArticleService>();
 
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizService, QuizService>();
+
+builder.Services.AddScoped<ITagRespository, TagRepository>();
+builder.Services.AddScoped<ITagService, TagService>();
+
+builder.Services.AddScoped<IStorageService, StorageService>();
+
 
 
 builder.Services.AddAutoMapper(typeof(AppProfile));

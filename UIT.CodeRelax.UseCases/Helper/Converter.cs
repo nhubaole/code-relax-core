@@ -49,6 +49,33 @@ namespace UIT.CodeRelax.UseCases.Helper
         }
 
 
+        public static object ParseOutput(string output, string returnType)
+        {
+            try
+            {
+                switch (returnType)
+                {
+                    case "int":
+                        return int.Parse(output);
+
+                    case "string":
+                        return output;
+
+                    case "list<int>":
+                        return JsonConvert.DeserializeObject<List<int>>(output);
+
+                    case "list<string>":
+                        return JsonConvert.DeserializeObject<List<string>>(output);
+
+                    default:
+                        throw new NotSupportedException($"Unsupported return type: {returnType}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failed to parse output for return type '{returnType}'. Output: {output}", ex);
+            }
+        }
         public static string ConvertParamsForLanguage(string language, JObject inputData)
         {
             var paramList = new List<string>();

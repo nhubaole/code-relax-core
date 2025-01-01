@@ -27,7 +27,7 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("result")]
         public string Result { get; set; }
         [Column("note")]
-        public string Note { get; set; }
+        public string? Note { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

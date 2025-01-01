@@ -41,11 +41,10 @@ namespace UIT.CodeRelax.API.Controllers
         /// <summary>
         /// Cập nhập thông tin tài khoản bằng id
         /// </summary>
-        /// <param name="UserId">ID của tài khoản cần cập nhật.</param>
         /// <param name="user">Thông tin tài khoản mới để cập nhật.</param>
         /// <returns>Thông tin tài khoản đã được cập nhật.</returns>
         [HttpPut("{UserId}")]
-        public async Task<IActionResult> UpdateUser(int UserId, [FromBody] UserProfileReq user)
+        public async Task<IActionResult> UpdateUser( [FromForm] UserProfileReq user)
         {
 
             var response = await userService.UpdateUserProfile(user);
@@ -61,6 +60,23 @@ namespace UIT.CodeRelax.API.Controllers
         public async Task<IActionResult> GetAllUsers ()
         {
             var response = await userService.GetAllUser();
+            return ApiOK(response);
+        }
+
+        /// <summary>
+        /// Lấy thông tin bảng xếp hạng
+        /// </summary>
+        /// <returns>Thông tin bảng xếp hạng</returns>
+        [HttpGet("LeaderBoard")]
+        public async Task<IActionResult> GetLeaderBoardInfo()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (email == null)
+            {
+                return Unauthorized("Can get current user. Please recheck token");
+            }
+            var currentUser = await userService.GetCurrentUser(email);
+            var response = await userService.GetLeaderBoardInfo(currentUser.Data.Id);
             return ApiOK(response);
         }
 

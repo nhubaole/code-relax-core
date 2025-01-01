@@ -16,8 +16,8 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
     {
         Task<APIResponse<IEnumerable<ArticleInforRes>>> GetAllArticlesAsync();
         Task<APIResponse<ArticleInforRes>> GetArticleByIdAsync(int id);
-        Task<APIResponse<ArticleInforRes>> AddArticleAsync(ArticleInfoReq article);
-        Task<APIResponse<ArticleInforRes>> UpdateArticleAsync(ArticleInfoReq article);
+        Task<APIResponse<int>> CreateAsync(CreateArticleReq article);
+        Task<APIResponse<ArticleInforRes>> UpdateArticleAsync(CreateArticleReq article);
         Task<APIResponse<ArticleInforRes>>DeleteArticleAsync(int id);
 
         Task<APIResponse<ArticleInforRes>> GetArticleAndQuizzesByIdAsync(int id);
