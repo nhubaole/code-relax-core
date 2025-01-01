@@ -257,5 +257,20 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
+
+        public string MapLevelToString (int level)
+        {
+            switch (level)
+            {
+                case 0:
+                    return "easy";
+                case 1:
+                    return "medium";
+                case 2:
+                    return "hard";
+                default:
+                    return "hard"; 
+            }
+        }
     }
 }

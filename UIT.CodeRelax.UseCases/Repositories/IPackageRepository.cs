@@ -18,6 +18,6 @@ namespace UIT.CodeRelax.UseCases.Repositories
 
         public Task<IEnumerable<Problem>> AddProblemToPackage(int packageId, int problemId);
 
-        public Task<IEnumerable<int>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps);
+        public Task<IEnumerable<string>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps);
     }
 }

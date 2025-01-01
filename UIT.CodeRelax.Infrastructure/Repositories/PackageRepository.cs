@@ -5,6 +5,7 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 using UIT.CodeRelax.Infrastructure.Repositories;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
+using System.Collections.ObjectModel;
 
 namespace UIT.CodeRelax.UseCases.Repositories
 {
@@ -120,9 +121,9 @@ namespace UIT.CodeRelax.UseCases.Repositories
             }
         }
 
-        public async Task<IEnumerable<int>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps)
+        public async Task<IEnumerable<string>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps)
         {
-            var res = new SortedSet<int>();
+            var res = new HashSet<string>();
 
             foreach (ProblemPackage pp in pps)
             {
@@ -131,7 +132,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
                     .Select(p => p.Difficulty)
                     .FirstOrDefaultAsync(); 
 
-                res.Add(level); 
+                res.Add(MapLevelToString(level)); 
             }
 
             return res; 
@@ -179,6 +180,20 @@ namespace UIT.CodeRelax.UseCases.Repositories
                    .ToListAsync();
             }
             catch (Exception ex) { throw; }
+        }
+        public string MapLevelToString(int level)
+        {
+            switch (level)
+            {
+                case 0:
+                    return "easy";
+                case 1:
+                    return "medium";
+                case 2:
+                    return "hard";
+                default:
+                    return "hard";
+            }
         }
     }
 }

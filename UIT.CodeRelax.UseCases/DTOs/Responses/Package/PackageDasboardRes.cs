@@ -12,7 +12,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Package
         public string Content { get; set; }
         public DateTime UpdatedAt { get; set; }
         public string UpdatedAgo { get; set; } = $"No content";
-        public IEnumerable<int> Levels { get; set; }  = new List<int>();
+        public IEnumerable<string> Levels { get; set; }  = new List<string>();
         public int NumberParticipants { get; set; } = 0;
         public int GetDaysSinceUpdated()
         {
@@ -25,8 +25,6 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Package
             int daysSinceUpdated = GetDaysSinceUpdated();
             UpdatedAgo = daysSinceUpdated > 0 ? $"Updated {daysSinceUpdated} day{(daysSinceUpdated > 1 ? "s" : "")} ago" : "Updated today";
         }
-
-
 
     }
 }
