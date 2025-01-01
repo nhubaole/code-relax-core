@@ -22,6 +22,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
         Task<User> UpdateUserAsync(User user);
 
         Task<UserProfileRes> AuthorizeUser(LoginReq loginReq);
+        Task<GetLeaderBoardInfoRes> GetLeaderBoardInfoAsync(int userId);
 
     }
 }
