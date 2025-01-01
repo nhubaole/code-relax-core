@@ -20,5 +20,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Problem
         public int TotalTestCase {  get; set; }
         public List<string> Tag { get; set; }
         public DateTime CreatedAt { get; set; }
+        public double AverageRating { get; set; }
+        public bool IsSolved { get; set; }
     }
 }

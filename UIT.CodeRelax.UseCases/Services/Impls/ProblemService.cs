@@ -37,7 +37,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
-                var problem = await GetByID(req.ProblemId);
+                var problem = await GetByID(req.ProblemId, null);
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
@@ -143,7 +143,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             string fullSourceCode = "";
             var tempPath = Path.GetTempFileName();
-            var problem = await _problemRepository.GetByIDAsync(problemId);
+            var problem = await _problemRepository.GetByIDAsync(problemId, null);
             string functionName = problem.FunctionName;
 
             var inputData = JsonConvert.DeserializeObject<JObject>(param);
@@ -351,11 +351,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             };
         }
 
-        public async Task<APIResponse<GetProblemRes>> GetByID(int problemID)
+        public async Task<APIResponse<GetProblemRes>> GetByID(int problemID, int? userId)
         {
             try
             {
-                var problem = await _problemRepository.GetByIDAsync(problemID);
+                var problem = await _problemRepository.GetByIDAsync(problemID, userId);
                 return new APIResponse<GetProblemRes>
                 {
                     StatusCode = StatusCodeRes.Success,
@@ -409,7 +409,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 var testCases = await GetTestCase(req.ProblemId);
-                var problem = await GetByID(req.ProblemId);
+                var problem = await GetByID(req.ProblemId, null);
                 var exampleTestCases = testCases.Data.Where(x => x.IsExample).ToList();
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
@@ -487,11 +487,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll()
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetAll(int? userId)
         {
             try
             {
-                var problems = await _problemRepository.GetAllAsync();
+                var problems = await _problemRepository.GetAllAsync(userId);
                 if (problems == null || !problems.Any())
                 {
                     return new APIResponse<IEnumerable<GetProblemRes>>

@@ -12,7 +12,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
 
     public class DiscussionsController : ControllerExtensions
     {

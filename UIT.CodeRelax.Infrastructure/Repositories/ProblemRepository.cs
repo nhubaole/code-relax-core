@@ -126,15 +126,17 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
-        public async Task<IEnumerable<GetProblemRes>> GetAllAsync()
+        public async Task<IEnumerable<GetProblemRes>> GetAllAsync(int? userId)
         {
             try
             {
                 var problems = await _dbContext.Problems
-                                   .Include(p => p.Testcases)
-                                   .Include(p => p.ProblemTags)
-                                       .ThenInclude(pt => pt.Tag)
-                                   .ToListAsync();
+                                    .Include(p => p.Testcases)
+                                    .Include(p => p.ProblemTags)
+                                        .ThenInclude(pt => pt.Tag)
+                                    .Include(p => p.Submissions)
+                                    .Include(p => p.ratings)
+                                    .ToListAsync();
 
                 var problemResponses = problems.Select(p => new GetProblemRes
                 {
@@ -148,7 +150,9 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     NumOfSubmission = p.NumOfSubmission,
                     TotalTestCase = p.Testcases.Count,
                     Tag = p.ProblemTags.Select(pt => pt.Tag.Name).ToList(),
-                    CreatedAt = p.CreatedAt
+                    CreatedAt = p.CreatedAt,
+                    AverageRating = p.ratings.Any() ? p.ratings.Average(r => r.NumberOfStar) : 0,
+                    IsSolved = userId != null ? p.Submissions.Any(s => s.UserId == userId && s.Status == 1) : false
                 });
 
                 return problemResponses;
@@ -160,14 +164,15 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
 
 
-        public async Task<GetProblemRes> GetByIDAsync(int id)
+        public async Task<GetProblemRes> GetByIDAsync(int id, int? userId)
         {
             try
             {
                 var problem = await _dbContext.Problems
                                     .Include(p => p.Testcases)
                                    .Include(p => p.ProblemTags)
-                                       .ThenInclude(pt => pt.Tag).FirstOrDefaultAsync(x => x.Id == id);
+                                       .ThenInclude(pt => pt.Tag).Include(p => p.Submissions)
+                                    .Include(p => p.ratings).FirstOrDefaultAsync(x => x.Id == id);
                 var problemResponses = new GetProblemRes
                 {
                     Id = problem.Id,
@@ -180,7 +185,9 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     NumOfSubmission = problem.NumOfSubmission,
                     TotalTestCase = problem.Testcases.Count,
                     Tag = problem.ProblemTags.Select(pt => pt.Tag.Name).ToList(),
-                    CreatedAt = problem.CreatedAt
+                    CreatedAt = problem.CreatedAt,
+                    AverageRating = problem.ratings.Any() ? problem.ratings.Average(r => r.NumberOfStar) : 0,
+                    IsSolved = userId != null ? problem.Submissions.Any(s => s.UserId == userId && s.Status == 1) : false
                 };
 
                 return problemResponses;

@@ -11,15 +11,16 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
 
     public class ProblemsController : ControllerExtensions
     {
         private readonly IProblemService _problemService;
-
-        public ProblemsController(IProblemService problemService)
+        private readonly IUserService _userService;
+        public ProblemsController(IProblemService problemService, IUserService userService)
         {
             _problemService = problemService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -67,7 +68,13 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByID(int id)
         {
-            var result = await _problemService.GetByID(id);
+            var email = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (email == null)
+            {
+                return Unauthorized("Can get current user. Please recheck token");
+            }
+            var user = await _userService.GetCurrentUser(email);
+            var result = await _problemService.GetByID(id, user.Data.Id);
             return ApiOK(result);
         }
 
@@ -80,7 +87,13 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _problemService.GetAll();
+            var email = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (email == null)
+            {
+                return Unauthorized("Can get current user. Please recheck token");
+            }
+            var user = await _userService.GetCurrentUser(email);
+            var result = await _problemService.GetAll(user.Data.Id);
             return ApiOK(result);
         }
 
