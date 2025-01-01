@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Discussion;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Rating;
@@ -11,6 +12,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
+    [Authorize]
     public class RatingsController : ControllerExtensions
     {
         private readonly IRatingService _ratingService;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -10,6 +11,7 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Package;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Authentication;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Package;
+using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
 using UIT.CodeRelax.UseCases.Repositories;
 using UIT.CodeRelax.UseCases.Services.Interfaces;
 
@@ -18,10 +20,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     public class PackageService : IPackageService
     {
         private readonly IPackageRepository _packageRepository;
-
-        public PackageService(IPackageRepository packageRepository)
+        private readonly IMapper _mapper;
+        public PackageService(IPackageRepository packageRepository, IMapper mapper)
         {
             this._packageRepository = packageRepository;
+            this._mapper = mapper;
 
         }
         string erroMesssage = string.Empty;
@@ -41,7 +44,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.Id = savedPackage.Id;
                     res.Content = savedPackage.Content;
                     res.UpdatedAt = savedPackage.UpdatedAt;
-                    res.UpdateUpdatedAgo();
+                    res.CalUpdatedAgo();
 
                     return new APIResponse<PackageDasboardRes>
                     {
@@ -88,7 +91,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 pd.NumberParticipants = 0;
                 pd.UpdatedAt = package.UpdatedAt;
 
-                pd.UpdateUpdatedAgo();
+                pd.CalUpdatedAgo();
 
 
                 res.Add(pd);
@@ -115,9 +118,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.Id = package.Id;
                     res.Content = package.Content;
                     res.UpdatedAt = package.UpdatedAt;
-                    res.UpdateUpdatedAgo();
-
-
+                    res.CalUpdatedAgo();
 
                     return new APIResponse<PackageDasboardRes>
                     {
@@ -149,21 +150,26 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public async Task<APIResponse<IEnumerable<Problem>>> GetProblemsOfPackage(int packageId)
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> GetProblemsOfPackage(int packageId)
         {
             try
             {
                 var problems = await _packageRepository.LoadProblemsOfPackageAsync(packageId);
-                //TODO : recheck map dto
-                return new APIResponse<IEnumerable<Problem>>
+              
+                List<GetProblemRes> res = new List<GetProblemRes>(); 
+                foreach (Problem p in problems)
+                {
+                    res.Add(_mapper.Map<GetProblemRes>(p));
+                }
+                return new APIResponse<IEnumerable<GetProblemRes>>
                 {
                     StatusCode = StatusCodeRes.Success,
-                    Data = problems
+                    Data = res               
                 };
             }
             catch (Exception ex)
             {
-                return new APIResponse<IEnumerable<Problem>>
+                return new APIResponse<IEnumerable<GetProblemRes>>
                 {
                     StatusCode = StatusCodeRes.InvalidData,
                     Message = $"Can't get problems of package {packageId}",
@@ -171,9 +177,52 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package)
+        public async Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Package existed  = await _packageRepository.GetByIDAsync(packageId);
+                if(existed != null)
+                {
+                    existed.UpdatedAt = DateTime.UtcNow;
+                    existed.Content = package.Content;
+                    existed.Type = package.Type;
+
+                    await _packageRepository.UpdatePackageAsync(existed);
+                    PackageDasboardRes res = new PackageDasboardRes();
+                    res.Id = existed.Id;
+                    res.Content = existed.Content;
+                    res.UpdatedAt = existed.UpdatedAt;
+                    res.CalUpdatedAgo();
+                    return new APIResponse<PackageDasboardRes>
+                    {
+                        StatusCode = StatusCodeRes.Success,
+                        Data = res
+                    };
+                }
+
+
+                return new APIResponse<PackageDasboardRes>
+                {
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Data = null
+
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<PackageDasboardRes>
+                {
+                    StatusCode = StatusCodeRes.InvalidData,
+                    Message = string.IsNullOrEmpty(ex.Message) ? "Not Success" : ex.Message,
+                    Data = null
+                };
+            }
+            finally
+            {
+                erroMesssage = string.Empty;
+            }
         }
 
         public Task<APIResponse<string>> DeletePackage(int packgeId)
@@ -181,9 +230,31 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             throw new NotImplementedException();
         }
 
-        public Task<APIResponse<IEnumerable<Problem>>> AddProblemToPakage(int packageId, Problem problem)
+        public async Task<APIResponse<IEnumerable<GetProblemRes>>> AddProblemToPakage(AddProblemPackageReq problemPackage)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var problems = await _packageRepository.AddProblemToPackage(problemPackage.PackageId, problemPackage.ProblemId);
+
+                List<GetProblemRes> res = new List<GetProblemRes>();
+                foreach (Problem p in problems)
+                {
+                    res.Add(_mapper.Map<GetProblemRes>(p));
+                }
+                return new APIResponse<IEnumerable<GetProblemRes>>
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Data = res
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<IEnumerable<GetProblemRes>>
+                {
+                    StatusCode = StatusCodeRes.ReturnWithData,
+                    Message = ex.Message,
+                };
+            }
         }
     }
 }

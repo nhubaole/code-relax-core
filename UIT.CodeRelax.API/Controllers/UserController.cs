@@ -41,11 +41,10 @@ namespace UIT.CodeRelax.API.Controllers
         /// <summary>
         /// Cập nhập thông tin tài khoản bằng id
         /// </summary>
-        /// <param name="UserId">ID của tài khoản cần cập nhật.</param>
         /// <param name="user">Thông tin tài khoản mới để cập nhật.</param>
         /// <returns>Thông tin tài khoản đã được cập nhật.</returns>
         [HttpPut("{UserId}")]
-        public async Task<IActionResult> UpdateUser(int UserId, [FromBody] UserProfileReq user)
+        public async Task<IActionResult> UpdateUser( [FromForm] UserProfileReq user)
         {
 
             var response = await userService.UpdateUserProfile(user);

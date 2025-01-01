@@ -28,7 +28,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(201, Type = typeof(bool))]
         [HttpPost()]
-        public async Task<IActionResult> Create(CreateDiscussionReq req)
+        public async Task<IActionResult> Create([FromForm] CreateDiscussionReq req)
         {
             return ApiOK(await _discussionService.Create(req));
         }

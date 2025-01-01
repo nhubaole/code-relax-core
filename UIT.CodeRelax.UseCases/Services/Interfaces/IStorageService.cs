@@ -11,6 +11,6 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
 {
     public interface IStorageService
     {
-        public Task<APIResponse<string>> Upload(IFormFile file, string bucketName, int userId);
+        public Task<APIResponse<string>> Upload(IFormFile file, string bucketName, int id);
     }
 }

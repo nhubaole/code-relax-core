@@ -14,15 +14,13 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
         Task<APIResponse<PackageDasboardRes>> CreateNewPackage(NewPackageReq package);
         Task<APIResponse<PackageDasboardRes>> GetById(int id);
 
-
         Task<APIResponse<IEnumerable<PackageDasboardRes>>> GetAllPackageDashboard();
-        //please recheck for DTO 
-        Task<APIResponse<IEnumerable<Problem>>> GetProblemsOfPackage(int packageId);
+        Task<APIResponse<IEnumerable<GetProblemRes>>> GetProblemsOfPackage(int packageId);
         Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package);
 
         Task<APIResponse<string>> DeletePackage(int packgeId);
 
-        Task<APIResponse<IEnumerable<Problem>>> AddProblemToPakage(int packageId, Problem problem);
+        Task<APIResponse<IEnumerable<GetProblemRes>>> AddProblemToPakage(AddProblemPackageReq problemPackage);
 
 
     }

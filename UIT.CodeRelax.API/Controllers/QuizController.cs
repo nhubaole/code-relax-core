@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Quiz;
 using UIT.CodeRelax.UseCases.Services.Impls;
@@ -8,7 +9,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class QuizController : ControllerExtensions
     {
         private readonly IQuizService _quizService;
@@ -51,7 +52,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <param name="quizReq">Thông tin quiz cần tạo</param>
         /// <returns>Quiz vừa được tạo</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateQuiz([FromBody] QuizInforReq quizReq)
+        public async Task<IActionResult> CreateQuiz([FromBody] CreateQuizReq quizReq)
         {
             return ApiOK(await _quizService.AddQuizAsync(quizReq));
         }
@@ -63,7 +64,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <param name="quizReq">Thông tin quiz mới</param>
         /// <returns>Không có nội dung trả về nếu thành công</returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateQuiz(int id, [FromBody] QuizInforReq quizReq)
+        public async Task<IActionResult> UpdateQuiz(int id, [FromBody] CreateQuizReq quizReq)
         {
             var result = await _quizService.UpdateQuizAsync(id, quizReq);
             return ApiOK(result);

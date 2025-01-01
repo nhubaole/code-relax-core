@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,43 +24,34 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         private readonly IArticleRepository _articleRepository;
         private readonly IConfiguration _config;
         private readonly ILogger<ArticleService> logger;
+        private readonly IMapper _mapper;
 
 
-        public ArticleService(IArticleRepository articleRepository, IConfiguration _config, ILogger<ArticleService> logger)
+        public ArticleService(IArticleRepository articleRepository, IConfiguration _config, ILogger<ArticleService> logger, IMapper mapper)
         {
             this._articleRepository = articleRepository;
             this._config = _config;
             this.logger = logger;
-
+            _mapper = mapper;
         }
 
-        public async Task<APIResponse<ArticleInforRes>> AddArticleAsync(ArticleInfoReq articleInfor)
+        public async Task<APIResponse<int>> CreateAsync(CreateArticleReq articleInfor)
         {
            try
             {
-                //Article article = new Article();
-                //article.Id = articleInfor.Id;
-                //article.Title = articleInfor.Title;
-                //article.Summary = articleInfor.Summary;
-                //article.SubTitle = articleInfor.SubTitle;
-                //article.Cover = articleInfor.Cover;
-                //article.Content = articleInfor.Content;
-                //article.CreatedAt = DateTime.UtcNow;
-                //article.UpdatedAt = DateTime.UtcNow;
-                //article.UserId = articleInfor.UserId;
 
-                Article article = MapToArticle(articleInfor);
+                var article = _mapper.Map<Article>(articleInfor);
 
-                var response = await _articleRepository.AddArticleAsync(article);
-                if(response != null)
+                var response = await _articleRepository.CreateAsync(article);
+                if(response != 0)
                 {
-                    return new APIResponse<ArticleInforRes> {
+                    return new APIResponse<int> {
                         StatusCode = StatusCodeRes.Success,
-                        Data = MapToArticleResponse(response)
+                        Data = response
                     };
                 }
 
-                return new APIResponse<ArticleInforRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = "method's not success, please check the input"
@@ -67,7 +59,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
             catch (Exception ex)
             {
-                return new APIResponse<ArticleInforRes>
+                return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
                     Message = ex.Message    
@@ -140,7 +132,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 };
             }
         }
-        public async Task<APIResponse<ArticleInforRes>> UpdateArticleAsync(ArticleInfoReq articleInfor)
+        public async Task<APIResponse<ArticleInforRes>> UpdateArticleAsync(CreateArticleReq articleInfor)
         {
             try
             {
@@ -172,8 +164,13 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Id = article.Id,
                 Title = article.Title,
                 Summary = article.Summary,
-                SubTitle = article.SubTitle,
-                Content = article.Content,
+                Cover = article.Cover,
+                SubTitle = article.SubTitle != null
+                        ? article.SubTitle
+                        : new List<string>(),
+                Content = article.Content != null
+                        ? article.Content
+                        : new List<string>(),
                 CreatedAt = article.CreatedAt,
                 UpdatedAt = article.UpdatedAt,
             };
@@ -197,21 +194,21 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             return res;
         }
 
-        public Article MapToArticle(ArticleInfoReq dto)
+        public Article MapToArticle(CreateArticleReq dto)
         {
             return new Article
             {
                 Id = dto.Id,
                 Title = dto.Title,
                 Summary = dto.Summary,
-                SubTitle = dto.SubTitle != null
-                    ? JsonSerializer.SerializeToDocument(dto.SubTitle)
-                    : null, 
                 Cover = dto.Cover,
-                Content = dto.Content != null
-                    ? JsonSerializer.SerializeToDocument(dto.Content)
+                SubTitle = dto.SubTitle != null
+                    ? dto.SubTitle
                     : null, 
-                CreatedAt = dto.CreatedAt,
+                Content = dto.Content != null
+                    ? dto.Content
+                    : null, 
+                CreatedAt = dto.CreatedAt,  
                 UpdatedAt = dto.UpdatedAt,
             };
         }

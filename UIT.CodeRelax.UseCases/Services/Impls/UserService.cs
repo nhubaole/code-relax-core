@@ -111,8 +111,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Password = user.Password,
                             Email = user.Email,
                             Role = user.Role,
-                            CreatedAt = user.CreatedAt
-
+                            CreatedAt = user.CreatedAt,
+                            AvatarUrl = user.AvatarUrl,
+                            Facebook = user.Facebook,
+                            Github = user.Github,
+                            Google = user.Google,
                         }
                     };
                 }
@@ -208,7 +211,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Password = userProfileReq.Password,
                             DisplayName = userProfileReq.DisplayName,
                             Role = userProfileReq.Role,
+                            Facebook = userProfileReq.Facebook,
+                            Github = userProfileReq.Github,
+                            Google = userProfileReq.Google,
                             AvatarUrl = avatarUrl.Data != null ? avatarUrl?.Data : null,
+                            CreatedAt = DateTime.UtcNow
                         };
 
                         
@@ -227,8 +234,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                                     Password = UpdatedUser.Password,
                                     Email = UpdatedUser.Email,
                                     Role = UpdatedUser.Role,
-                                    CreatedAt = UpdatedUser.CreatedAt
-
+                                    CreatedAt = UpdatedUser.CreatedAt,
+                                    AvatarUrl = UpdatedUser.AvatarUrl,
+                                    Facebook = UpdatedUser.Facebook,
+                                    Github = UpdatedUser.Github,
+                                    Google = UpdatedUser.Google,
                                 }
                             };
                         }
@@ -270,7 +280,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 return new APIResponse<IEnumerable<UserProfileRes>>()
                 {
-                    StatusCode = StatusCodeRes.ReturnWithData,
+                    StatusCode = StatusCodeRes.Success,
                     Message = "Success",
                     Data = rs,
                 };
@@ -333,7 +343,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Password = user.Password,
                             Email = user.Email,
                             Role = user.Role,
-                            CreatedAt = user.CreatedAt
+                            CreatedAt = user.CreatedAt,
+                            AvatarUrl = user.AvatarUrl,
+                            Facebook = user.Facebook,
+                            Github = user.Github,
+                            Google = user.Google,
 
                         }
                     };

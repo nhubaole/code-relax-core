@@ -40,13 +40,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             return article;
         }
-        public async Task<Article> AddArticleAsync(Article article)
+        public async Task<int> CreateAsync(Article article)
         {
-            //article.Content = Converter.ConvertToJson(article.Content);
-            //article.SubTitle = Converter.ConvertToJson(article.SubTitle);
+
             await _dbContext.Articles.AddAsync(article);  
             await _dbContext.SaveChangesAsync();
-            return article;
+            return article.Id;
         }
         public async Task<Article> UpdateArticleAsync(Article article)
         {

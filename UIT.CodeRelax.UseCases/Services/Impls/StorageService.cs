@@ -17,7 +17,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
            
         }
 
-        public async Task<APIResponse<string>> Upload(IFormFile file, string bucketName, int userId)
+        public async Task<APIResponse<string>> Upload(IFormFile file, string bucketName, int id)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 var lastIndexOfDot = file.FileName.LastIndexOf('.');
                 string extension = file.FileName.Substring(lastIndexOfDot + 1);
                 string updatedTime = DateTime.Now.ToString("yyyy-dd-MM-HH-mm-ss");
-                string fileName = $"user-{userId}?t={updatedTime}.{extension}";
+                string fileName = $"{bucketName}-{id}?t={updatedTime}.{extension}";
                 await _client.Storage.From(bucketName).Upload(
                     memoryStream.ToArray(),
                    fileName,
@@ -43,16 +43,16 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                                             .GetPublicUrl(fileName);
                
 
-                Uri uri = new Uri(avatarUrl);
-                string path = uri.AbsolutePath;
+                //Uri uri = new Uri(avatarUrl);
+                //string path = uri.AbsolutePath;
 
-                // Lấy phần cuối cùng của đường dẫn
-                string avatarFileName = Path.GetFileName(path);
+                //// Lấy phần cuối cùng của đường dẫn
+                //string avatarFileName = Path.GetFileName(path);
 
                 return new APIResponse<string>{                
                     StatusCode = StatusCodeRes.Success,
                     Message = "Upload image successful.",
-                    Data = avatarFileName
+                    Data = avatarUrl
                 };
             }
             catch (Exception ex)
