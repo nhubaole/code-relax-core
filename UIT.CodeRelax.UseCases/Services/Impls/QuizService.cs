@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,19 +19,22 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         private readonly IQuizRepository quizRepository;
         private readonly IConfiguration _config;
         private readonly ILogger<ArticleService> logger;
+        private readonly IMapper _mapper;
 
-        public QuizService(IQuizRepository quizRepository, IConfiguration config, ILogger<ArticleService> logger)
+
+        public QuizService(IQuizRepository quizRepository, IConfiguration config, ILogger<ArticleService> logger, IMapper mapper)
         {
             this.quizRepository = quizRepository;
             _config = config;
             this.logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<APIResponse<Quiz>> AddQuizAsync(CreateQuizReq Quiz)
         {
             try
             {
-                Quiz model = MapToQuiz(Quiz);
+                var model = _mapper.Map<Quiz>(Quiz);
                 var response = await quizRepository.AddQuizAsync(model);
 
                 return new APIResponse<Quiz>
@@ -148,7 +152,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             return new CreateQuizReq
             {
-                Id = quiz.Id,
                 QuestionText = quiz.QuestionText,
                 OptionA = quiz.OptionA,
                 OptionB = quiz.OptionB,
@@ -156,8 +159,6 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 OptionD = quiz.OptionD,
                 CorrectOption = quiz.CorrectOption,
                 Explanation = quiz.Explanation,
-                CreatedAt = quiz.CreatedAt,
-                ArticleId = quiz.ArticleId
             };
         }
 
@@ -165,7 +166,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             return new Quiz
             {
-                Id = quizReq.Id,
+                Id = 1,
                 QuestionText = quizReq.QuestionText,
                 OptionA = quizReq.OptionA,
                 OptionB = quizReq.OptionB,
@@ -173,8 +174,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 OptionD = quizReq.OptionD,
                 CorrectOption = quizReq.CorrectOption,
                 Explanation = quizReq.Explanation,
-                CreatedAt = quizReq.CreatedAt,
-                ArticleId = quizReq.ArticleId
+
             };
         }
     }

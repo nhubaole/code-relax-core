@@ -67,7 +67,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <param name="req"></param>
         /// <returns>Articlc vừa tạo</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateArticle(CreateArticleReq req)
+        public async Task<IActionResult> CreateArticle([FromForm]CreateArticleReq req)
         {
 
             return ApiOK (await articleService.CreateAsync(req));
@@ -82,10 +82,10 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPut("{ArticleId}")]
         public async Task<IActionResult> UpdateArticle(int ArticleId, [FromBody] CreateArticleReq article)
         {
-            if (ArticleId != article.Id)
-            {
-                return BadRequest();
-            }
+            //if (ArticleId != article.Id)
+            //{
+            //    return BadRequest();
+            //}
 
             return ApiOK(await articleService.UpdateArticleAsync(article));
         }

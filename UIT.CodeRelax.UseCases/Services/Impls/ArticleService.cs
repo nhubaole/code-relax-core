@@ -2,12 +2,14 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Transactions;
 using UIT.CodeRelax.Core.Entities;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Responses;
@@ -22,47 +24,66 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
     public class ArticleService : IArticleService
     {
         private readonly IArticleRepository _articleRepository;
+        private readonly IStorageService _storageService;
+        private readonly IQuizRepository _quizRepository;
         private readonly IConfiguration _config;
         private readonly ILogger<ArticleService> logger;
         private readonly IMapper _mapper;
 
 
-        public ArticleService(IArticleRepository articleRepository, IConfiguration _config, ILogger<ArticleService> logger, IMapper mapper)
+        public ArticleService(IArticleRepository articleRepository, IConfiguration _config, ILogger<ArticleService> logger, IMapper mapper, IStorageService storageService, IQuizRepository quizRepository)
         {
             this._articleRepository = articleRepository;
             this._config = _config;
             this.logger = logger;
             _mapper = mapper;
+            _storageService = storageService;
+            _quizRepository = quizRepository;
         }
 
         public async Task<APIResponse<int>> CreateAsync(CreateArticleReq articleInfor)
         {
-           try
+            try
             {
-
-                var article = _mapper.Map<Article>(articleInfor);
-
-                var response = await _articleRepository.CreateAsync(article);
-                if(response != 0)
+                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    return new APIResponse<int> {
-                        StatusCode = StatusCodeRes.Success,
-                        Data = response
+                    var coverUrl = await _storageService.Upload(articleInfor.Cover, "covers-image", Generator.GetNextSerial());
+                    var article = new Article
+                    {
+                        Title = articleInfor.Title,
+                        Summary = articleInfor.Summary,
+                        Content = articleInfor.Content,
+                        SubTitle = articleInfor.SubTitle,
+                        Cover = coverUrl.Data != null ? coverUrl.Data : "",
+                    };
+
+                    var response = await _articleRepository.CreateAsync(article);
+
+                    // Nếu tất cả đều thành công, commit transaction
+                    scope.Complete();
+
+                    if (response != 0)
+                    {
+                        return new APIResponse<int>
+                        {
+                            StatusCode = StatusCodeRes.Success,
+                            Data = response
+                        };
+                    }
+
+                    return new APIResponse<int>
+                    {
+                        StatusCode = StatusCodeRes.InternalError,
+                        Message = "method's not success, please check the input"
                     };
                 }
-
-                return new APIResponse<int>
-                {
-                    StatusCode = StatusCodeRes.InternalError,
-                    Message = "method's not success, please check the input"
-                };
             }
             catch (Exception ex)
             {
                 return new APIResponse<int>
                 {
                     StatusCode = StatusCodeRes.InternalError,
-                    Message = ex.Message    
+                    Message = ex.Message
                 };
             }
         }
@@ -137,7 +158,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             try
             {
                 Article article = new Article();
-                article = MapToArticle(articleInfor);
+                //article = MapToArticle(articleInfor);
 
 
                 var response = await _articleRepository.UpdateArticleAsync(article);
@@ -194,24 +215,24 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             return res;
         }
 
-        public Article MapToArticle(CreateArticleReq dto)
-        {
-            return new Article
-            {
-                Id = dto.Id,
-                Title = dto.Title,
-                Summary = dto.Summary,
-                Cover = dto.Cover,
-                SubTitle = dto.SubTitle != null
-                    ? dto.SubTitle
-                    : null, 
-                Content = dto.Content != null
-                    ? dto.Content
-                    : null, 
-                CreatedAt = dto.CreatedAt,  
-                UpdatedAt = dto.UpdatedAt,
-            };
-        }
+        //public Article MapToArticle(CreateArticleReq dto)
+        //{
+        //    return new Article
+        //    {
+        //        Id = dto.Id,
+        //        Title = dto.Title,
+        //        Summary = dto.Summary,
+        //        Cover = dto.Cover,
+        //        SubTitle = dto.SubTitle != null
+        //            ? dto.SubTitle
+        //            : null, 
+        //        Content = dto.Content != null
+        //            ? dto.Content
+        //            : null, 
+        //        CreatedAt = dto.CreatedAt,  
+        //        UpdatedAt = dto.UpdatedAt,
+        //    };
+        //}
 
         public async Task<APIResponse<ArticleInforRes>> GetArticleAndQuizzesByIdAsync(int id)
         {

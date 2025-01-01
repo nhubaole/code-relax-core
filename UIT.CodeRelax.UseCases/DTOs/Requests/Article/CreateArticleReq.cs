@@ -7,20 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Quiz;
+using Microsoft.AspNetCore.Http;
 
 namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
 {
     public class CreateArticleReq
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Summary { get; set; }
         public List<string> SubTitle { get; set; }
-        public string Cover { get; set; }
+        public IFormFile Cover { get; set; }
         public List<string> Content { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
     public class ArticleInforvalidator : AbstractValidator<CreateArticleReq>
     {

@@ -42,10 +42,16 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
         }
         public async Task<int> CreateAsync(Article article)
         {
-
-            await _dbContext.Articles.AddAsync(article);  
-            await _dbContext.SaveChangesAsync();
-            return article.Id;
+            try
+            {
+                await _dbContext.Articles.AddAsync(article);
+                await _dbContext.SaveChangesAsync();
+                return article.Id;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         public async Task<Article> UpdateArticleAsync(Article article)
         {
