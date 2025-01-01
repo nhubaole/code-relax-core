@@ -28,7 +28,6 @@ namespace UIT.CodeRelax.Core.Entities
         [Column("updated_at")]
         public DateTime UpdatedAt { get; set; }
 
-
         //relation one to many with problem package 
         public ICollection<ProblemPackage> ProblemPackages { get; set; } = new List<ProblemPackage>();
         public int GetDaysSinceUpdated()
@@ -41,8 +40,14 @@ namespace UIT.CodeRelax.Core.Entities
         //Get level 
         public IEnumerable<int> GetDifficulties()
         {
-            return ProblemPackages.Select(pp => pp.Problem.Difficulty).Distinct();
+            if(ProblemPackages == null || !ProblemPackages.Any())
+            {
+                return Enumerable.Empty<int>();
+            }              
+            return ProblemPackages
+           .Where(pp => pp.Problem != null)
+           .Select(pp => pp.Problem.Difficulty)
+           .Distinct();
         }
-
     }
 }

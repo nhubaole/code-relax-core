@@ -110,12 +110,36 @@ namespace UIT.CodeRelax.UseCases.Repositories
         {
             try
             {
-                return await _dbContext.Packages.FirstOrDefaultAsync(p => p.Id == id);
+                return await _dbContext.Packages
+                    .Include(p => p.ProblemPackages)
+                    .FirstOrDefaultAsync(p => p.Id == id);
             }
             catch (Exception ex)
             {
                 throw ;
             }
+        }
+
+        public async Task<IEnumerable<int>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps)
+        {
+            var res = new SortedSet<int>();
+
+            foreach (ProblemPackage pp in pps)
+            {
+                var level = await _dbContext.Problems
+                    .Where(p => p.Id == pp.ProblemId)
+                    .Select(p => p.Difficulty)
+                    .FirstOrDefaultAsync(); 
+
+                res.Add(level); 
+            }
+
+            return res; 
+        }
+
+        public Task<IEnumerable<int>> GetLevelOfPackge(IEnumerable<ProblemPackage> pps)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<Package> UpdatePackageAsync(Package package)
