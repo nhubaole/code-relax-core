@@ -12,13 +12,15 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Authentication
     {
         public string Email { get; set; }
 
-        private string _password; // original
+        //private string _password; // original
 
-        public string Password
-        {
-            get => _password;
-            set => _password = ConvertToBase64(value); 
-        }
+        //public string Password
+        //{
+        //    get => _password;
+        //    set => _password = ConvertToBase64(value); 
+        //}
+
+        public string Password { get; set; } = string.Empty;
 
         // Encode password to base 64
         private string ConvertToBase64(string password)

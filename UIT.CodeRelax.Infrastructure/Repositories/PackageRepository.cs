@@ -124,6 +124,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
         public async Task<IEnumerable<string>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps)
         {
             var res = new HashSet<string>();
+            var resInt = new SortedSet<int>();
 
             foreach (ProblemPackage pp in pps)
             {
@@ -132,7 +133,12 @@ namespace UIT.CodeRelax.UseCases.Repositories
                     .Select(p => p.Difficulty)
                     .FirstOrDefaultAsync(); 
 
-                res.Add(MapLevelToString(level)); 
+                resInt.Add(level); 
+            }
+
+            foreach (int level in resInt)
+            {
+                res.Add(MapLevelToString(level));
             }
 
             return res; 
@@ -186,13 +192,13 @@ namespace UIT.CodeRelax.UseCases.Repositories
             switch (level)
             {
                 case 0:
-                    return "easy";
+                    return "Beginner";
                 case 1:
-                    return "medium";
+                    return "Intermediate";
                 case 2:
-                    return "hard";
+                    return "Advanced";
                 default:
-                    return "hard";
+                    return "Advanced";
             }
         }
     }

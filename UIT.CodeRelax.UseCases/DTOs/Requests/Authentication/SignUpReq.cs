@@ -10,11 +10,13 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Authentication
     public class SignUpReq
     {
         public string Email { get; set; } = String.Empty;
-        private string _password;
-        public string Password { 
-            get => _password; 
-            set =>_password = ConvertToBase64(value); 
-        } 
+        //private string _password;
+        //public string Password { 
+        //    get => _password; 
+        //    set =>_password = ConvertToBase64(value); 
+        //} 
+        public string Password { get; set; } = String.Empty;
+
         public string DisplayName { get; set; } = String.Empty;
 
         // Encode password to base 64
