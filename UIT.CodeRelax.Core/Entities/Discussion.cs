@@ -17,7 +17,9 @@ namespace UIT.CodeRelax.Core.Entities
         public int ID { get; set; }
 
         [Column("content")]
-        public string Content { get; set; }
+        public string? Content { get; set; }
+        [Column("image_content")]
+        public string? ImageContent { get; set; }
 
         [Column("type")]
         public string Type { get; set; }

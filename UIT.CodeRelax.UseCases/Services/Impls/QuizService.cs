@@ -26,7 +26,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             this.logger = logger;
         }
 
-        public async Task<APIResponse<Quiz>> AddQuizAsync(QuizInforReq Quiz)
+        public async Task<APIResponse<Quiz>> AddQuizAsync(CreateQuizReq Quiz)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         }
 
 
-        public async Task<APIResponse<Quiz>> UpdateQuizAsync(int id, QuizInforReq Quiz)
+        public async Task<APIResponse<Quiz>> UpdateQuizAsync(int id, CreateQuizReq Quiz)
         {
 
             try
@@ -144,9 +144,9 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
-        public QuizInforReq MapToReq(Quiz quiz)
+        public CreateQuizReq MapToReq(Quiz quiz)
         {
-            return new QuizInforReq
+            return new CreateQuizReq
             {
                 Id = quiz.Id,
                 QuestionText = quiz.QuestionText,
@@ -161,7 +161,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             };
         }
 
-        public Quiz MapToQuiz(QuizInforReq quizReq)
+        public Quiz MapToQuiz(CreateQuizReq quizReq)
         {
             return new Quiz
             {

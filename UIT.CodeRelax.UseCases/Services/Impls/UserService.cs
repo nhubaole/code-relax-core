@@ -25,12 +25,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         private readonly IUserRepository userRepository;
         private readonly IConfiguration _config;
         private readonly ILogger<UserService> logger;
+        private readonly IStorageService _storageService;
 
 
-        public UserService(IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUserRepository userRepository, IConfiguration configuration, IStorageService storageService)
         {
             this.userRepository = userRepository;
             this._config = configuration;
+            _storageService = storageService;   
         }
 
         private string errorMessage = null;
@@ -199,6 +201,9 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                     if (String.IsNullOrEmpty(errorMessage))
                     {
+
+                        var avatarUrl = await _storageService.Upload(userProfileReq.formFile, "users-avatar", userProfileReq.Id);
+
                         User user = new User
                         {
                             Id = userProfileReq.Id,
@@ -206,13 +211,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Password = userProfileReq.Password,
                             DisplayName = userProfileReq.DisplayName,
                             Role = userProfileReq.Role,
-                            AvatarUrl = userProfileReq.AvatarUrl,
                             Facebook = userProfileReq.Facebook,
                             Github = userProfileReq.Github,
                             Google = userProfileReq.Google,
-                            CreatedAt = userProfileReq.CreatedAt
+                            AvatarUrl = avatarUrl.Data != null ? avatarUrl?.Data : null,
+                            CreatedAt = DateTime.UtcNow
                         };
 
+                        
                         var UpdatedUser = await userRepository.UpdateUserAsync(user);
 
                         if (UpdatedUser != null)

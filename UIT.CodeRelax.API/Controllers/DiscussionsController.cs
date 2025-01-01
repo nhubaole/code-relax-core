@@ -12,7 +12,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
 
     public class DiscussionsController : ControllerExtensions
     {
@@ -28,7 +28,7 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(201, Type = typeof(bool))]
         [HttpPost()]
-        public async Task<IActionResult> Create(CreateDiscussionReq req)
+        public async Task<IActionResult> Create([FromForm] CreateDiscussionReq req)
         {
             return ApiOK(await _discussionService.Create(req));
         }

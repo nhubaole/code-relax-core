@@ -9,7 +9,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Problem
     public class SubmitCodeRes
     {
         public bool Success { get; set; }
-        public string Output { get; set; }
+        public object Output { get; set; }
         public string Errors { get; set; }
     }
 }

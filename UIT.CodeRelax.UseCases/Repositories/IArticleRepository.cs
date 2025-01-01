@@ -11,7 +11,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
     {
         Task<IEnumerable<Article>> GetAllArticlesAsync();
         Task<Article> GetArticleByIdAsync(int id);
-        Task<Article> AddArticleAsync(Article article);
+        Task<int> CreateAsync(Article article);
         Task<Article> UpdateArticleAsync(Article article);
         Task DeleteArticleAsync(int id);
         Task<Article> GetArticleByIdWithQuizzesAsync(int id);

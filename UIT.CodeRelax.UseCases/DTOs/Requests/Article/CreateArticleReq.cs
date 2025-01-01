@@ -10,7 +10,7 @@ using UIT.CodeRelax.UseCases.DTOs.Requests.Authentication;
 
 namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
 {
-    public class ArticleInfoReq
+    public class CreateArticleReq
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -18,10 +18,11 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Article
         public List<string> SubTitle { get; set; }
         public string Cover { get; set; }
         public List<string> Content { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
-    public class ArticleInforvalidator : AbstractValidator<ArticleInfoReq>
+    public class ArticleInforvalidator : AbstractValidator<CreateArticleReq>
     {
         public ArticleInforvalidator()
         {

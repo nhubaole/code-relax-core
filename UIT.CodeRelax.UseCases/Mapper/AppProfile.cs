@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UIT.CodeRelax.Core.Entities;
+using UIT.CodeRelax.UseCases.DTOs.Requests.Article;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Problem;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Discussion;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Problem;
@@ -26,6 +27,7 @@ namespace UIT.CodeRelax.UseCases.Mapper
             CreateMap<User, UserProfileRes>().ReverseMap();
             CreateMap<Discussion, DiscussionRes>().ReverseMap();
             CreateMap<Rating, RatingRes>().ReverseMap();
+            CreateMap<Article, CreateArticleReq>().ReverseMap();
         }
     }
 }

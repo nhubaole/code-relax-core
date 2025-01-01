@@ -10,7 +10,9 @@ using UIT.CodeRelax.Infrastructure.DataAccess;
 using UIT.CodeRelax.UseCases.DTOs.Requests.Discussion;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Discussion;
 using UIT.CodeRelax.UseCases.DTOs.Responses.Submission;
+using UIT.CodeRelax.UseCases.Helper;
 using UIT.CodeRelax.UseCases.Repositories;
+using UIT.CodeRelax.UseCases.Services.Interfaces;
 
 namespace UIT.CodeRelax.Infrastructure.Repositories
 {
@@ -18,10 +20,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
-        public DiscussionRepository(AppDbContext dbContext, IMapper mapper)
+        private readonly IStorageService _storageService;
+        public DiscussionRepository(AppDbContext dbContext, IMapper mapper, IStorageService storageService)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _storageService = storageService;
         }
 
         public async Task<int> CreateAsync(CreateDiscussionReq req)
@@ -29,9 +33,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             try
             {
+                var radomValue = Generator.GetNextSerial();
+                var imageContent = await _storageService.Upload(req.formFile, "discussions-image", radomValue);
                 var discussion = new Discussion
                 {
                     Content = req.Content,
+                    ImageContent = imageContent.Data,
                     Type = req.Type,
                     UserID = req.UserID,
                     ProblemID = req.ProblemID,

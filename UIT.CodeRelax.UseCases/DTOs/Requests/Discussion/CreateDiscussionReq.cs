@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -11,7 +12,8 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Discussion
 {
     public class CreateDiscussionReq
     {
-        public string Content { get; set; }
+        public string? Content { get; set; }
+        public IFormFile? formFile { get; set; }
         public string Type { get; set; }
         public int UserID { get; set; }
         public int ProblemID { get; set; }

@@ -38,6 +38,12 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<Tag>> GetAllAsync()
+        {
+            var tag = await _dbContext.Tags.ToListAsync();
+            return tag;
+        } 
+
         public async Task<int> GetIdByName(string name)
         {
             try

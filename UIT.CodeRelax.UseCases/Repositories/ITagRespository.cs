@@ -10,7 +10,9 @@ namespace UIT.CodeRelax.UseCases.Repositories
     public interface ITagRespository
     {
         public Task<Tag> CreateNewTag(string name);
+        public Task<IEnumerable<Tag>> GetAllAsync();
 
         public Task<int> GetIdByName(string name); 
+
     }
 }

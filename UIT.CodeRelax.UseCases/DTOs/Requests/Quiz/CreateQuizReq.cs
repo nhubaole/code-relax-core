@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace UIT.CodeRelax.UseCases.DTOs.Requests.Quiz
 {
-    public class QuizInforReq
+    public class CreateQuizReq
     {
         public int Id { get; set; }
         public string QuestionText { get; set; }
