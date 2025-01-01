@@ -232,13 +232,15 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     userRank.Rank = rank++;
                 }
 
-                var currentUser = leaderboard.FirstOrDefault(x => x.UserName == users.FirstOrDefault(u => u.Id == userId)?.DisplayName);
+                var currentUserRank = leaderboard.FirstOrDefault(x => x.UserName == users.FirstOrDefault(u => u.Id == userId)?.DisplayName);
+
+                var currentUser = _dbContext.Users.FirstOrDefault(x => x.Id == userId);
 
                 return new GetLeaderBoardInfoRes
                 {
-                    UserName = currentUser?.UserName ?? "",
-                    UserAvatar = currentUser?.UserAvatar ?? "",
-                    Rank = currentUser?.Rank ?? 0,
+                    UserName = currentUser.DisplayName,
+                    UserAvatar = currentUser.AvatarUrl,
+                    Rank = currentUserRank?.Rank ?? 0,
                     ListUser = leaderboard
                 };
             }
