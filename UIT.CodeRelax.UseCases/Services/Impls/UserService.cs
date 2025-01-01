@@ -296,6 +296,30 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             }
         }
 
+        public async Task<APIResponse<GetLeaderBoardInfoRes>> GetLeaderBoardInfo(int userId)
+        {
+            try
+            {
+                var rs = await userRepository.GetLeaderBoardInfoAsync(userId);
+
+                return new APIResponse<GetLeaderBoardInfoRes> ()
+                {
+                    StatusCode = StatusCodeRes.Success,
+                    Message = "Success",
+                    Data = rs,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new APIResponse<GetLeaderBoardInfoRes>()
+                {
+                    StatusCode = StatusCodeRes.InternalError,
+                    Message = ex.Message,
+                    Data = null,
+                };
+            }
+        }
+
         public string GenerateJwtToken(UserProfileRes loginReq)
         {
             var claims = new Dictionary<string, object>

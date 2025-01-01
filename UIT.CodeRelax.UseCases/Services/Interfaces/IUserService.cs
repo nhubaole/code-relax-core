@@ -19,6 +19,7 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
 
         Task<APIResponse<UserProfileRes>> GetCurrentUser(string email);
 
+        Task<APIResponse<GetLeaderBoardInfoRes>> GetLeaderBoardInfo(int userId);
         string GenerateJwtToken(UserProfileRes userProfile);
     }
 }

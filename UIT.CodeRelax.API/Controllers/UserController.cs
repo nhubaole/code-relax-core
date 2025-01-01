@@ -64,6 +64,23 @@ namespace UIT.CodeRelax.API.Controllers
         }
 
         /// <summary>
+        /// Lấy thông tin bảng xếp hạng
+        /// </summary>
+        /// <returns>Thông tin bảng xếp hạng</returns>
+        [HttpGet("LeaderBoard")]
+        public async Task<IActionResult> GetLeaderBoardInfo()
+        {
+            var email = User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress")?.Value;
+            if (email == null)
+            {
+                return Unauthorized("Can get current user. Please recheck token");
+            }
+            var currentUser = await userService.GetCurrentUser(email);
+            var response = await userService.GetLeaderBoardInfo(currentUser.Data.Id);
+            return ApiOK(response);
+        }
+
+        /// <summary>
         /// Lấy người dùng hiện tại đã đăng nhập
         /// </summary>
         /// <returns>Thông tin người dùng.</returns>
