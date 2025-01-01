@@ -83,7 +83,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     return new APIResponse<SubmitCodeRes>
                     {
-                        StatusCode = StatusCodeRes.Deny,
+                        StatusCode = StatusCodeRes.Success,
                         Message = $"{passedCount}/{totalCount} test cases passed",
                         Data = new SubmitCodeRes
                         {
@@ -248,7 +248,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 {
                     if (!string.IsNullOrWhiteSpace(line))
                     {
-                        string paramValue = line.Split('=')[1].Trim(); 
+                        string paramValue = line.Split('=')[1].Trim();
                         paramValues.Add(paramValue);
                     }
                 }
