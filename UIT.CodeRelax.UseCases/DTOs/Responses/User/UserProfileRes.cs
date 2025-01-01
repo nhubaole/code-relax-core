@@ -19,6 +19,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.User
         public int Role { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        public string AvatarUrl { get; set; }
 
         public string? Google { get; set; }
         public string? Github { get; set; }

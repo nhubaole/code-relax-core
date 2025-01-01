@@ -36,7 +36,7 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
 
             modelBuilder.Entity<Rating>()
                 .HasKey(r => new { r.UserID, r.ProblemID });
-        }
+        
 
             //notify that these properties is jsonB
             modelBuilder.Entity<Article>(entity =>
@@ -46,6 +46,7 @@ namespace UIT.CodeRelax.Infrastructure.DataAccess
                 entity.Property(e => e.Content)
                       .HasColumnType("jsonb");
             });
+    
 
         }
     }

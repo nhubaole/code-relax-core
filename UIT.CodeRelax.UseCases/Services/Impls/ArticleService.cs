@@ -172,8 +172,13 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Id = article.Id,
                 Title = article.Title,
                 Summary = article.Summary,
-                SubTitle = article.SubTitle,
-                Content = article.Content,
+                Cover = article.Cover,
+                SubTitle = article.SubTitle != null
+                        ? JsonSerializer.Deserialize<List<string>>(article.SubTitle)
+                        : new List<string>(),
+                Content = article.Content != null
+                        ? JsonSerializer.Deserialize<List<string>>(article.Content)
+                        : new List<string>(),
                 CreatedAt = article.CreatedAt,
                 UpdatedAt = article.UpdatedAt,
             };
@@ -204,14 +209,14 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Id = dto.Id,
                 Title = dto.Title,
                 Summary = dto.Summary,
+                Cover = dto.Cover,
                 SubTitle = dto.SubTitle != null
                     ? JsonSerializer.SerializeToDocument(dto.SubTitle)
                     : null, 
-                Cover = dto.Cover,
                 Content = dto.Content != null
                     ? JsonSerializer.SerializeToDocument(dto.Content)
                     : null, 
-                CreatedAt = dto.CreatedAt,
+                CreatedAt = dto.CreatedAt,  
                 UpdatedAt = dto.UpdatedAt,
             };
         }

@@ -44,9 +44,22 @@ namespace UIT.CodeRelax.API.Controllers
         /// <returns></returns>
         [ProducesResponseType(200, Type = typeof(bool))]
         [HttpPost()]
-        public async Task<IActionResult> Create(NewPackageReq req)
+        public async Task<IActionResult> Create([FromBody] NewPackageReq req)
         {
             return ApiOK(await packageService.CreateNewPackage(req));
+        }
+
+        /// <summary>
+        /// update
+        /// </summary>
+        /// <param name="id">ID của package cần cập nhật</param>
+        /// <param name="req">Thông tin Pakacge mới</param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpPut()]
+        public async Task<IActionResult> Update(int id, [FromBody] NewPackageReq req)
+        {
+            return ApiOK(await packageService.UpdatePackage(id, req));
         }
 
         /// <summary>
@@ -60,5 +73,30 @@ namespace UIT.CodeRelax.API.Controllers
         {
             return ApiOK(await packageService.GetById(id));
         }
+
+        /// <summary>
+        /// Get problems of package by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpGet("{id}/problems")]
+        public async Task<IActionResult> GetProblemsOfPackage(int id)
+        {
+            return ApiOK(await packageService.GetProblemsOfPackage(id));
+        }
+
+        /// <summary>
+        /// Add a problem to packge
+        /// </summary>
+        /// <param name="req">Object chứa idProblem và idPackge</param>
+        /// <returns>List problems of pakage</returns>
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [HttpPost("add-problem")]
+        public async Task<IActionResult> AddProblemToPackge([FromBody] AddProblemPackageReq req)
+        {
+            return ApiOK(await packageService.AddProblemToPakage(req));
+        }
+
     }
 }

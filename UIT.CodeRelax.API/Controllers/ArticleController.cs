@@ -8,7 +8,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class ArticleController : ControllerExtensions
     {
         private readonly IArticleService articleService;
@@ -68,6 +68,7 @@ namespace UIT.CodeRelax.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateArticle([FromBody]ArticleInfoReq article)
         {
+
             return ApiOK (await articleService.AddArticleAsync(article));
         }
 
