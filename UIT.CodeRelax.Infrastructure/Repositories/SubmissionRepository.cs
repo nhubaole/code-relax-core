@@ -34,6 +34,8 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     ProblemId = req.ProblemID,
                     UserId = req.UserID,
                     Code = req.Code,
+                    Result = req.Result,
+                    Status = req.Status,
                     Language = req.Language,
                     CreatedAt = DateTime.UtcNow
                 };

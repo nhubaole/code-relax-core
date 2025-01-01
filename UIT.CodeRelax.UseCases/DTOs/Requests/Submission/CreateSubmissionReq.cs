@@ -13,6 +13,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.Submission
         public int UserID { get; set; }
         public string Code { get; set; }
         public string Language { get; set; }
+        public string Result { get; set; }
         public int Status { get; set; }
     }
 }
