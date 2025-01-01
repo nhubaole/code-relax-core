@@ -13,7 +13,7 @@ namespace UIT.CodeRelax.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
 
     public class PackageController : ControllerExtensions
     {

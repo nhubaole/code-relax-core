@@ -87,7 +87,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 PackageDasboardRes pd = new PackageDasboardRes();
                 pd.Id = package.Id;
                 pd.Content = package.Content;
-                pd.Levels = package.GetDifficulties();
+                pd.Levels = await _packageRepository.GetLevelOfPackageAsync(package.ProblemPackages);
                 pd.NumberParticipants = 0;
                 pd.UpdatedAt = package.UpdatedAt;
 
@@ -118,6 +118,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     res.Id = package.Id;
                     res.Content = package.Content;
                     res.UpdatedAt = package.UpdatedAt;
+                    res.Levels = await _packageRepository.GetLevelOfPackageAsync(package.ProblemPackages);
                     res.CalUpdatedAgo();
 
                     return new APIResponse<PackageDasboardRes>
@@ -254,6 +255,21 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     StatusCode = StatusCodeRes.ReturnWithData,
                     Message = ex.Message,
                 };
+            }
+        }
+
+        public string MapLevelToString (int level)
+        {
+            switch (level)
+            {
+                case 0:
+                    return "easy";
+                case 1:
+                    return "medium";
+                case 2:
+                    return "hard";
+                default:
+                    return "hard"; 
             }
         }
     }

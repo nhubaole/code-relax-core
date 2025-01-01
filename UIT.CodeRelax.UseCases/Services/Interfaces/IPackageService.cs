@@ -19,9 +19,6 @@ namespace UIT.CodeRelax.UseCases.Services.Interfaces
         Task<APIResponse<PackageDasboardRes>> UpdatePackage(int packageId, NewPackageReq package);
 
         Task<APIResponse<string>> DeletePackage(int packgeId);
-
         Task<APIResponse<IEnumerable<GetProblemRes>>> AddProblemToPakage(AddProblemPackageReq problemPackage);
-
-
     }
 }

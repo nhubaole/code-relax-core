@@ -17,5 +17,7 @@ namespace UIT.CodeRelax.UseCases.Repositories
         public Task DeletePackageAsync (Package package);
 
         public Task<IEnumerable<Problem>> AddProblemToPackage(int packageId, int problemId);
+
+        public Task<IEnumerable<string>> GetLevelOfPackageAsync(IEnumerable<ProblemPackage> pps);
     }
 }
