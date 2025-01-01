@@ -38,13 +38,13 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 var testCases = await GetTestCase(req.ProblemId);
                 var problem = await GetByID(req.ProblemId, null);
-                var result = new SubmitCodeRes();
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
+                int passedCount = 0;
+                int totalCount = testCases.Data.Count();
 
                 foreach (var testCase in testCases.Data)
                 {
-
                     var sourceFilePath = await GetSourceFilePath(req.Language, req.SourceCode, req.ProblemId, testCase.Input);
 
                     var response = await RunCode(sourceFilePath, req.Language, problem.Data.ReturnType);
@@ -58,12 +58,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             Data = new SubmitCodeRes
                             {
                                 Success = false,
-                                Output = response.Errors
+                                Output = response.Errors,
                             }
                         };
                     }
 
-                    // Parse testCase.Output to compare
                     var expectedOutput = JsonConvert.DeserializeObject<Dictionary<string, object>>(testCase.Output)["output"];
                     if (!Comparer.CompareOutputs(response.Output, expectedOutput))
                     {
@@ -73,22 +72,23 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     else
                     {
                         outputs.Add(response.Output);
+                        passedCount++;
                     }
 
-                    // Clean up source file after execution
                     File.Delete(sourceFilePath);
                 }
+
 
                 if (!isAccept)
                 {
                     return new APIResponse<SubmitCodeRes>
                     {
                         StatusCode = StatusCodeRes.Deny,
-                        Message = "One or more test case is failed",
+                        Message = $"{passedCount}/{totalCount} test cases passed",
                         Data = new SubmitCodeRes
                         {
                             Success = false,
-                            Output = outputs[0] // Return the output that failed
+                            Output = $"{passedCount}/{totalCount}",
                         }
                     };
                 }
@@ -96,11 +96,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = StatusCodeRes.Success,
-                    Message = "All test case passed",
+                    Message = $"{passedCount}/{totalCount} test cases passed",
                     Data = new SubmitCodeRes
                     {
                         Success = true,
-                        Output = outputs[0] // Return the first successful output
+                        Output = $"{passedCount}/{totalCount}",
                     }
                 };
             }
@@ -109,10 +109,15 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = StatusCodeRes.InternalError,
-                    Message = ex.Message
+                    Message = ex.Message,
+                    Data = new SubmitCodeRes
+                    {
+                        Success = false,
+                    }
                 };
             }
         }
+
 
 
         public async Task<APIResponse<IEnumerable<TestcaseRes>>> GetTestCase(int problemID)
@@ -237,14 +242,23 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             else if (language == "Python")
             {
                 string[] lines = convertedParams.Split('\n');
-                string numsValue = lines[0].Split('=')[1].Trim();
-                string targetValue = lines[1].Split('=')[1].Trim();
 
-                // Format the params as function arguments
-                string formattedParams = $"{numsValue}, {targetValue}";
+                var paramValues = new List<string>();
+                foreach (var line in lines)
+                {
+                    if (!string.IsNullOrWhiteSpace(line))
+                    {
+                        string paramValue = line.Split('=')[1].Trim(); 
+                        paramValues.Add(paramValue);
+                    }
+                }
+
+                string formattedParams = string.Join(", ", paramValues);
+
                 fullSourceCode = $"{sourceCode}" +
                                  $"\nprint({functionName}({formattedParams}))";
             }
+
             else
             {
                 tempPath = Path.ChangeExtension(tempPath, extension);
