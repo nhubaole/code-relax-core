@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace UIT.CodeRelax.UseCases.DTOs.Requests.User
 {
@@ -16,6 +17,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Requests.User
         public string Password { get; set; }
 
         public int Role { get; set; }
+        public IFormFile formFile { get; set; }
 
         //public string Google { get; set; }
         //public string Github { get; set; }
