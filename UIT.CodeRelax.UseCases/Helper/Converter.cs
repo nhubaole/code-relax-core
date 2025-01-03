@@ -61,6 +61,9 @@ namespace UIT.CodeRelax.UseCases.Helper
                     case "string":
                         return output;
 
+                    case "bool":
+                        return output;
+
                     case "list<int>":
                         return JsonConvert.DeserializeObject<List<int>>(output);
 

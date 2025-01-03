@@ -21,7 +21,18 @@ namespace UIT.CodeRelax.UseCases.Helper
             }
             else if (expectedOutput == "true" || expectedOutput == "false")
             {
-                actualOutput = actualOutput.ToLowerInvariant();
+                if (actualOutput == "0")
+                {
+                    actualOutput = "false";
+                }
+                else if (actualOutput == "1")
+                {
+                    actualOutput = "true";
+                }
+                else
+                {
+                    actualOutput = actualOutput.ToLowerInvariant();
+                }
             }
             else if (actualOutput is IEnumerable<int> || actualOutput is IEnumerable<string>)
             {

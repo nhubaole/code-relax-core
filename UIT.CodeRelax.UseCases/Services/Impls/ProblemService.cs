@@ -177,13 +177,13 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                       public static void main(String[] args) {{
                           {convertedParams}  // Initialize input parameters from JSON
 
-                          // Print the result with Arrays.toString if needed
-                          System.out.println(
-                              {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))}) instanceof int[] 
-                                  ? Arrays.toString({functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))})) 
-                                  : {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))})
-                          );
-                      }}
+                           Object result = {functionName}({string.Join(", ", inputData.Properties().Select(param => param.Name))});
+                           if (result instanceof int[]) {{
+                               System.out.println(Arrays.toString((int[]) result)); // Print the array
+                           }} else {{
+                               System.out.println(result);  // Print the result directly if not an array
+                           }}
+                        }}
 
                       {sourceCode}
                     }}";
