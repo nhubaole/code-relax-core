@@ -66,8 +66,8 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
             try
             {
                 var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == UserId);
-                UserProfileRes userRes = new UserProfileRes();    
-                if(user != null)
+                UserProfileRes userRes = new UserProfileRes();
+                if (user != null)
                 {
                     userRes.Id = user.Id;
                     userRes.DisplayName = user.DisplayName;
@@ -112,31 +112,38 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
         public async Task<User> UpdateUserAsync(User user)
         {
-            var userExisted = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
-
-            if(userExisted != null)
+            try
             {
-                userExisted.Email = user.Email;
-                userExisted.Password = user.Password;
-                userExisted.DisplayName = user.DisplayName;
-                userExisted.AvatarUrl = user.AvatarUrl;
-                userExisted.Role = user.Role;   
-                userExisted.CreatedAt = user.CreatedAt;
-                userExisted.Facebook = user.Facebook;
-                userExisted.Google = user.Google;
-                userExisted.Github  = user.Github;
+                var userExisted = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == user.Id);
 
-                _dbContext.Users.Update(userExisted);
-
-                var result = await _dbContext.SaveChangesAsync();
-
-                if (result > 0)
+                if (userExisted != null)
                 {
-                    return userExisted;
-                }
-            }
+                    userExisted.Email = user.Email;
+                    userExisted.Password = user.Password;
+                    userExisted.DisplayName = user.DisplayName;
+                    userExisted.AvatarUrl = user.AvatarUrl;
+                    userExisted.Role = user.Role;
+                    userExisted.CreatedAt = user.CreatedAt;
+                    userExisted.Facebook = user.Facebook;
+                    userExisted.Google = user.Google;
+                    userExisted.Github = user.Github;
 
-            return null;
+                    _dbContext.Users.Update(userExisted);
+
+                    var result = await _dbContext.SaveChangesAsync();
+
+                    if (result > 0)
+                    {
+                        return userExisted;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
 
         }
 
@@ -161,7 +168,8 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 return users;
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return Enumerable.Empty<UserProfileRes>();
             }
         }
@@ -216,7 +224,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                     {
                         UserName = user.DisplayName,
                         UserAvatar = user.AvatarUrl,
-                        Rank = 0, 
+                        Rank = 0,
                         TotalSubmission = totalSubmissions,
                         TotalSolved = easySolved + mediumSolved + hardSolved,
                         Acceptance = Math.Round((decimal)(easySolved + mediumSolved + hardSolved) / totalSubmissions * 100, 2),

@@ -88,7 +88,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 pd.Id = package.Id;
                 pd.Content = package.Content;
                 pd.Levels = await _packageRepository.GetLevelOfPackageAsync(package.ProblemPackages);
-                pd.NumberParticipants = 0;
+                pd.NumberProblem = package.ProblemPackages.Count;
                 pd.UpdatedAt = package.UpdatedAt;
 
                 pd.CalUpdatedAgo();

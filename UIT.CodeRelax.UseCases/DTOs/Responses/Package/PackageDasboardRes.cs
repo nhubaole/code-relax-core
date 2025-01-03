@@ -13,7 +13,7 @@ namespace UIT.CodeRelax.UseCases.DTOs.Responses.Package
         public DateTime UpdatedAt { get; set; }
         public string UpdatedAgo { get; set; } = $"No content";
         public IEnumerable<string> Levels { get; set; }  = new List<string>();
-        public int NumberParticipants { get; set; } = 0;
+        public int NumberProblem { get; set; } = 0;
         public int GetDaysSinceUpdated()
         {
             DateTime currentDate = DateTime.Now;
