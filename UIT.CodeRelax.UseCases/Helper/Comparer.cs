@@ -19,7 +19,7 @@ namespace UIT.CodeRelax.UseCases.Helper
             {
                 actualArray = actualOutput;
             }
-            else if (expectedOutput == "true" || expectedOutput == "false")
+            else if (expectedOutput is string && (expectedOutput == "true" || expectedOutput == "false"))
             {
                 if (actualOutput == "0")
                 {
