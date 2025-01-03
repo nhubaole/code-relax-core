@@ -29,16 +29,16 @@ namespace UIT.CodeRelax.Core.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [Column("avatar_url")]
-        public string AvatarUrl { get; set; } = string.Empty;
+        public string? AvatarUrl { get; set; }
 
         [Column("google")]
-        public string Google { get; set; } = string.Empty;
+        public string? Google { get; set; }
 
         [Column("github")]
-        public string Github { get; set; } = string.Empty;
+        public string? Github { get; set; }
 
         [Column("facebook")]
-        public string Facebook { get; set; } = string.Empty;
+        public string? Facebook { get; set; }
 
         //relation one to many with submissions 
         public ICollection<Submission> Submissions { get; set; } = new List<Submission>();

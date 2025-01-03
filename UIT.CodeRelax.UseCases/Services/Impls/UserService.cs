@@ -189,15 +189,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 if (isExisted)
                 {
-                    if (!IsValidEmail(userProfileReq.Email))
-                    {
-                        errorMessage = "Invalid email format.";
-                    }
-
-                    else if (!IsValidPassword(userProfileReq.Password))
-                    {
-                        errorMessage = "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, and one digit."; // Lưu thông điệp lỗi cho mật khẩu
-                    }
+                    
 
                     if (String.IsNullOrEmpty(errorMessage))
                     {
