@@ -19,6 +19,10 @@ namespace UIT.CodeRelax.UseCases.Helper
             {
                 actualArray = actualOutput;
             }
+            else if (expectedOutput == "true" || expectedOutput == "false")
+            {
+                actualOutput = actualOutput.ToLowerInvariant();
+            }
             else if (actualOutput is IEnumerable<int> || actualOutput is IEnumerable<string>)
             {
                 actualArray = new JArray(actualOutput);
