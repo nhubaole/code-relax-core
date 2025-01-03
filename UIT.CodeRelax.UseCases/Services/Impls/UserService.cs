@@ -202,7 +202,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     if (String.IsNullOrEmpty(errorMessage))
                     {
 
-                        var avatarUrl = await _storageService.Upload(userProfileReq.formFile, "users-avatar", userProfileReq.Id);
+                        var avatarUrl = await _storageService.Upload(userProfileReq.formFile, "users-avatar");
 
                         User user = new User
                         {

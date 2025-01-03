@@ -17,7 +17,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
            
         }
 
-        public async Task<APIResponse<string>> Upload(IFormFile file, string bucketName, int id)
+        public async Task<APIResponse<string>> Upload(IFormFile file, string bucketName)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 var lastIndexOfDot = file.FileName.LastIndexOf('.');
                 string extension = file.FileName.Substring(lastIndexOfDot + 1);
                 string updatedTime = DateTime.Now.ToString("yyyy-dd-MM-HH-mm-ss");
-                string fileName = $"{bucketName}-{id}?t={updatedTime}.{extension}";
+                string fileName = $"{bucketName}-{updatedTime}.{extension}";
                 await _client.Storage.From(bucketName).Upload(
                     memoryStream.ToArray(),
                    fileName,

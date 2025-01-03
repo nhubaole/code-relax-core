@@ -47,7 +47,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                 {
-                    var coverUrl = await _storageService.Upload(articleInfor.Cover, "covers-image", Generator.GetNextSerial());
+                    var coverUrl = await _storageService.Upload(articleInfor.Cover, "covers-image");
                     var article = new Article
                     {
                         Title = articleInfor.Title,

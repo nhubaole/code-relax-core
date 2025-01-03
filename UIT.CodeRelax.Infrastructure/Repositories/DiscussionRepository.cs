@@ -33,12 +33,17 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
 
             try
             {
-                var radomValue = Generator.GetNextSerial();
-                var imageContent = await _storageService.Upload(req.formFile, "discussions-image", radomValue);
+                string imageContent = null;
+                if (req.formFile != null)
+                {
+                    var res = await _storageService.Upload(req.formFile, "discussions-image");
+                    imageContent = res.Data;
+                }
+                
                 var discussion = new Discussion
                 {
                     Content = req.Content,
-                    ImageContent = imageContent.Data,
+                    ImageContent = imageContent,
                     Type = req.Type,
                     UserID = req.UserID,
                     ProblemID = req.ProblemID,
@@ -96,6 +101,7 @@ namespace UIT.CodeRelax.Infrastructure.Repositories
                 var discussion = await _dbContext.Discussions
                                         .Include(s => s.User)
                                         .Where(x => x.ProblemID == problemID)
+                                        .OrderByDescending(x => x.CreatedAt)
                                         .ToListAsync();
                 return _mapper.Map<List<DiscussionRes>>(discussion);
             }
