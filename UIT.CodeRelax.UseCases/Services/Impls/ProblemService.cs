@@ -428,6 +428,8 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 var result = new SubmitCodeRes();
                 bool isAccept = true;
                 var outputs = new List<dynamic>();
+                int passedCount = 0;
+                int totalCount = testCases.Data.Count();
 
                 foreach (var testCase in exampleTestCases)
                 {
@@ -460,22 +462,22 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     else
                     {
                         outputs.Add(response.Output);
+                        passedCount++;
                     }
 
                     // Clean up source file after execution
                     File.Delete(sourceFilePath);
                 }
-
                 if (!isAccept)
                 {
                     return new APIResponse<SubmitCodeRes>
                     {
-                        StatusCode = StatusCodeRes.Deny,
-                        Message = "One or more test case is failed",
+                        StatusCode = StatusCodeRes.Success,
+                        Message = $"{passedCount}/{totalCount} test cases passed",
                         Data = new SubmitCodeRes
                         {
                             Success = false,
-                            Output = outputs[0] // Return the output that failed
+                            Output = $"{passedCount}/{totalCount}",
                         }
                     };
                 }
@@ -483,11 +485,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 return new APIResponse<SubmitCodeRes>
                 {
                     StatusCode = StatusCodeRes.Success,
-                    Message = "All test case passed",
+                    Message = $"{passedCount}/{totalCount} test cases passed",
                     Data = new SubmitCodeRes
                     {
                         Success = true,
-                        Output = outputs[0] // Return the first successful output
+                        Output = $"{passedCount}/{totalCount}",
                     }
                 };
             }
