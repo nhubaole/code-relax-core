@@ -32,7 +32,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
         {
             this.userRepository = userRepository;
             this._config = configuration;
-            _storageService = storageService;   
+            _storageService = storageService;
         }
 
         private string errorMessage = null;
@@ -156,11 +156,11 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                         Data = new LoginRes
                         {
                             Token = jwt,
-                            ExpiresIn =(int)(DateTime.UtcNow.AddHours(1) - DateTime.UtcNow).TotalSeconds
+                            ExpiresIn = (int)(DateTime.UtcNow.AddHours(1) - DateTime.UtcNow).TotalSeconds
                         }
                     };
                 }
-                
+
                 return new APIResponse<LoginRes>
                 {
                     StatusCode = StatusCodeRes.InvalidData,
@@ -189,7 +189,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
 
                 if (isExisted)
                 {
-                    
+
 
                     if (String.IsNullOrEmpty(errorMessage))
                     {
@@ -210,7 +210,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                             CreatedAt = DateTime.UtcNow
                         };
 
-                        
+
                         var UpdatedUser = await userRepository.UpdateUserAsync(user);
 
                         if (UpdatedUser != null)
@@ -294,7 +294,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
             {
                 var rs = await userRepository.GetLeaderBoardInfoAsync(userId);
 
-                return new APIResponse<GetLeaderBoardInfoRes> ()
+                return new APIResponse<GetLeaderBoardInfoRes>()
                 {
                     StatusCode = StatusCodeRes.Success,
                     Message = "Success",
@@ -331,7 +331,7 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                 Audience = audience,
                 Claims = claims,
                 SigningCredentials = credentials,
-                Expires = DateTime.UtcNow.AddHours(1)
+                Expires = DateTime.UtcNow.AddHours(2)
             };
             var securityToken = new JwtSecurityTokenHandler().CreateToken(token);
 
@@ -375,7 +375,8 @@ namespace UIT.CodeRelax.UseCases.Services.Impls
                     Message = string.IsNullOrEmpty(errorMessage) ? "Not Success" : errorMessage,
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return new APIResponse<UserProfileRes>
                 {
                     StatusCode = StatusCodeRes.InternalError,
